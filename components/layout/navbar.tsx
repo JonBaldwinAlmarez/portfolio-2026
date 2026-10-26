@@ -3,7 +3,7 @@ import { siteConfig } from "@/config/site";
 
 export function Navbar() {
   return (
-    <header className="border-b border-border/70">
+    <header className="sticky top-0 z-10 border-b border-border/70 bg-background/95 backdrop-blur">
       <nav
         aria-label="Main navigation"
         className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-4"

@@ -3,12 +3,12 @@ import { skills } from "@/data/skills";
 export default function SkillsSection() {
   return (
     <section aria-labelledby="skills-heading">
-      <h2
-        className="font-heading text-2xl font-semibold tracking-tight"
+      <h3
+        className="font-heading text-xl font-semibold tracking-tight"
         id="skills-heading"
       >
         Skills
-      </h2>
+      </h3>
       {skills.length > 0 ? (
         <ul className="mt-5 flex flex-wrap gap-2">
           {skills.map((skill) => (

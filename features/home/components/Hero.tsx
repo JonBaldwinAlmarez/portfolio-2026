@@ -6,7 +6,10 @@ import { siteConfig } from "@/config/site";
 
 export default function Hero() {
   return (
-    <section className="mx-auto flex min-h-[65vh] w-full max-w-5xl flex-col items-start justify-center px-6 py-20">
+    <section
+      className="mx-auto flex min-h-[65vh] w-full max-w-5xl scroll-mt-20 flex-col items-start justify-center px-6 py-20"
+      id="home"
+    >
       <p className="text-sm font-medium text-primary">Personal portfolio</p>
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
@@ -29,13 +32,13 @@ export default function Hero() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Link
           className="rounded-md bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          href="/projects"
+          href="/#projects"
         >
           View projects
         </Link>
         <Link
           className="rounded-md border border-border px-5 py-3 text-sm font-medium transition-colors hover:bg-muted"
-          href="/contact"
+          href="/#contact"
         >
           Get in touch
         </Link>

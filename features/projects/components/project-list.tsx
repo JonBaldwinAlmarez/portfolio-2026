@@ -18,7 +18,7 @@ export default function ProjectList() {
           className="flex h-full flex-col rounded-xl border border-border p-6"
           key={project.title}
         >
-          <h2 className="font-heading text-xl font-semibold">{project.title}</h2>
+          <h3 className="font-heading text-xl font-semibold">{project.title}</h3>
           <p className="mt-3 flex-1 leading-7 text-muted-foreground">
             {project.description}
           </p>

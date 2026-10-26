@@ -1,23 +1,29 @@
-import Link from "next/link";
+import ExperienceSection from "@/features/about/experience-section";
+import SkillsSection from "@/features/about/skills-section";
 
 export default function AboutPreview() {
   return (
-    <section className="border-y border-border/70 bg-muted/30">
+    <section
+      aria-labelledby="about-heading"
+      className="scroll-mt-20 border-y border-border/70 bg-muted/30"
+      id="about"
+    >
       <div className="mx-auto w-full max-w-5xl px-6 py-16 sm:py-20">
         <p className="text-sm font-medium text-primary">About</p>
-        <h2 className="mt-3 font-heading text-3xl font-semibold tracking-tight">
-          A little about me
-        </h2>
-        <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">
-          Add a short biography here. Share your focus, interests, and what you
-          are looking for next.
-        </p>
-        <Link
-          className="mt-6 inline-flex text-sm font-medium text-primary underline-offset-4 hover:underline"
-          href="/about"
+        <h2
+          className="mt-3 font-heading text-3xl font-semibold tracking-tight"
+          id="about-heading"
         >
-          More about me <span aria-hidden="true">→</span>
-        </Link>
+          Your story
+        </h2>
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-muted-foreground">
+          Replace this introduction with your biography, current focus, and the
+          kind of opportunities you are interested in.
+        </p>
+        <div className="mt-12 grid gap-12 md:grid-cols-2">
+          <ExperienceSection />
+          <SkillsSection />
+        </div>
       </div>
     </section>
   );
