@@ -1,6 +1,6 @@
 export const siteConfig = {
-  name: "Your Name",
-  email: "hello@example.com",
+  name: "Jon Almarez",
+  email: "cpe.jbma@gmail.com",
   navigation: [
     { label: "Home", href: "/#home" },
     { label: "About", href: "/#about" },
