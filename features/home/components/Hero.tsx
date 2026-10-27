@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { siteConfig } from "@/config/site";
-import { AnimatedBorderButton } from "@/components/shared/AnimatedButton";
+import { Button } from "@/components/ui/button";
 
 export default function Hero() {
   return (
@@ -16,7 +16,7 @@ export default function Hero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="mt-4 max-w-3xl font-heading text-5xl font-semibold tracking-tight sm:text-7xl">
-        Hi, I’m {siteConfig.name}.
+        Hi, I’m {siteConfig.name}
       </motion.h1>
 
       <motion.p
@@ -28,14 +28,18 @@ export default function Hero() {
         CSS, JavaScript, React, React Native, Tailwind CSS, and Lavavel. I
         prioritize clean code, performance, and user-friendly design.
       </motion.p>
-      <div className="mt-8 flex flex-wrap gap-3">
-        <AnimatedBorderButton>
-          <Link href="/#projects">View projects</Link>
-        </AnimatedBorderButton>
 
-        <AnimatedBorderButton>
-          <Link href="/#contact">Get in touch</Link>
-        </AnimatedBorderButton>
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Button>
+          <Link href="/#projects">View projects</Link>
+        </Button>
+
+        <a
+          href="/CV/Curriculum-Vitae.pdf"
+          download="Curriculum-Vitae.pdf"
+          rel="noopener noreferrer">
+          <Button>Download CV</Button>
+        </a>
       </div>
     </section>
   );
