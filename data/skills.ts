@@ -16,11 +16,9 @@ export const skills: string[] = [
   "Mongoose",
   "RESTful APIs",
 
-  // Version Control
-  "Git",
-  "GitHub",
-
   // Other Tools
   "VS Code",
   "Postman",
+  "Git",
+  "GitHub",
 ];
