@@ -5,11 +5,11 @@ import ContactSection from "@/features/contact/components/contact-section";
 
 export default function Home() {
   return (
-    <main className="flex-1 scroll-smooth">
+    <>
       <Hero />
       <AboutPreview />
       <ProjectsSection />
       <ContactSection />
-    </main>
+    </>
   );
 }
