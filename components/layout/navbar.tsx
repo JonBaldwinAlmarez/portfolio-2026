@@ -5,20 +5,28 @@ import Link from "next/link";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { Menu, X } from "lucide-react";
 
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { siteConfig } from "@/config/site";
-import { useActiveSection, useMediaQuery } from "@/hooks/use-active-section";
-
+import { useActiveSection } from "@/hooks/use-active-section";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 
-// Collects section IDs from navigation links for active-section tracking.
-// Declared outside the component to maintain a stable array reference.
-const sectionIds = [
-  ...siteConfig.navigation.map((item) => item.href.replace("#", "")),
-  "contact",
+// Combines the configured navigation links with the contact link.
+const menuItems = [
+  ...siteConfig.navigation,
+  { label: "Contact", href: "#contact" },
 ];
 
-// Shared animation settings for the navbar links and menu button.
+// Extracts section IDs used to track the currently active navigation item.
+const sectionIds = menuItems.map((item) => item.href.replace("#", ""));
+
+// Shared animation settings for the navbar's entrance and exit transitions.
 const fadeSlide = {
   initial: { opacity: 0, y: -8 },
   animate: { opacity: 1, y: 0 },
@@ -30,26 +38,26 @@ export function Navbar() {
   // Tracks whether the page has been scrolled beyond the initial threshold.
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Controls the visibility of the mobile navigation menu.
+  // Controls the visibility of the mobile dropdown menu.
   const [isOpen, setIsOpen] = useState(false);
 
   // Identifies the section currently active in the viewport.
   const activeId = useActiveSection(sectionIds);
 
-  // Detects desktop viewport sizes to switch between navigation layouts.
+  // Detects desktop viewport sizes to determine which navigation layout to display.
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  // Displays desktop navigation links only after the page is scrolled.
+  // Shows desktop navigation links only when the viewport is desktop-sized and scrolled.
   const showLinks = isDesktop && isScrolled;
 
-  // Updates the navbar appearance and closes the mobile menu when scrolling.
+  // Updates the navbar appearance and closes the dropdown when the user scrolls.
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
-      setIsOpen(false);
+      setIsOpen(false); // Closes the dropdown when the user scrolls.
     };
 
-    // Initializes the navbar state based on the current scroll position.
+    // Initializes the navbar state using the current scroll position.
     handleScroll();
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -57,21 +65,8 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Allows users to close the mobile menu using the Escape key.
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsOpen(false);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen]);
-
   return (
-    // Respects the user's operating system preference for reduced motion.
+    // Respects the user's system preference for reduced motion.
     <MotionConfig reducedMotion="user">
       <header
         className={cn(
@@ -91,7 +86,7 @@ export function Navbar() {
             {siteConfig.name}
           </Link>
 
-          {/* Animates the transition between desktop links and the mobile menu button. */}
+          {/* Animates the transition between desktop navigation and the mobile menu. */}
           <AnimatePresence mode="wait" initial={false}>
             {showLinks ? (
               // Desktop navigation with an animated indicator for the active section.
@@ -115,7 +110,7 @@ export function Navbar() {
                         )}>
                         {item.label}
 
-                        {/* Shared layout ID animates the active indicator between links. */}
+                        {/* Animates the active indicator between navigation links. */}
                         {isActive && (
                           <motion.span
                             layoutId="active-link"
@@ -127,82 +122,67 @@ export function Navbar() {
                   );
                 })}
 
-                {/* Provides a prominent link to the contact section. */}
+                {/* Uses the shared Shadcn button component as a navigation link. */}
                 <li className="ml-3">
-                  <Link
-                    href="#contact"
-                    className={buttonVariants({ size: "lg" })}>
+                  <Button
+                    size="lg"
+                    nativeButton={false}
+                    render={<Link href="#contact" />}>
                     Contact
-                  </Link>
+                  </Button>
                 </li>
               </motion.ul>
             ) : (
-              // Mobile menu toggle displayed when desktop navigation is hidden.
+              // Mobile dropdown trigger displayed when desktop navigation is hidden.
               <motion.div key="hamburger" {...fadeSlide}>
-                <button
-                  type="button"
-                  onClick={() => setIsOpen((open) => !open)}
-                  aria-expanded={isOpen}
-                  aria-controls="mobile-menu"
-                  aria-label={isOpen ? "Close menu" : "Open menu"}
-                  className={buttonVariants({
-                    variant: "ghost",
-                    size: "icon",
-                  })}>
-                  {/* Animates the transition between the menu and close icons. */}
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.span
-                      key={isOpen ? "close" : "open"}
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                      className="flex">
-                      {isOpen ? <X /> : <Menu />}
-                    </motion.span>
-                  </AnimatePresence>
-                </button>
+                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+                  {/* Controls the dropdown visibility and displays the animated menu icon. */}
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={isOpen ? "Close menu" : "Open menu"}
+                      />
+                    }>
+                    {/* Animates the transition between the menu and close icons. */}
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.span
+                        key={isOpen ? "close" : "open"}
+                        initial={{ rotate: -90, opacity: 0 }}
+                        animate={{ rotate: 0, opacity: 1 }}
+                        exit={{ rotate: 90, opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        className="flex">
+                        {isOpen ? <X /> : <Menu />}
+                      </motion.span>
+                    </AnimatePresence>
+                  </DropdownMenuTrigger>
+
+                  {/* Displays the mobile navigation links in an aligned dropdown panel. */}
+                  <DropdownMenuContent
+                    align="end"
+                    sideOffset={8}
+                    className="w-48">
+                    {menuItems.map((item) => (
+                      <DropdownMenuItem
+                        key={item.href}
+                        render={<Link href={item.href} />}
+                        className={cn(
+                          "py-2 text-base",
+                          // Highlights the dropdown item matching the active section.
+                          activeId === item.href.replace("#", "") &&
+                            "text-primary",
+                        )}>
+                        {item.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </motion.div>
             )}
           </AnimatePresence>
         </nav>
-
-        {/* Mobile navigation panel with animated height and opacity transitions. */}
-        <AnimatePresence>
-          {isOpen && !showLinks && (
-            <motion.div
-              id="mobile-menu"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="overflow-hidden">
-              <ul className="mx-auto flex max-w-5xl flex-col gap-1 px-6 pb-6">
-                {/* Combines configured navigation links with the contact link. */}
-                {[
-                  ...siteConfig.navigation,
-                  { label: "Contact", href: "#contact" },
-                ].map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      // Closes the menu after the user selects a navigation link.
-                      onClick={() => setIsOpen(false)}
-                      className={cn(
-                        "block rounded-lg px-3 py-3 text-base font-medium transition-colors hover:bg-muted",
-                        // Highlights the link matching the currently active section.
-                        activeId === item.href.replace("#", "")
-                          ? "text-primary"
-                          : "text-foreground",
-                      )}>
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </header>
     </MotionConfig>
   );
