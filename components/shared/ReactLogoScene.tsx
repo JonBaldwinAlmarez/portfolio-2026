@@ -2,7 +2,13 @@
 
 /* eslint-disable react/no-unknown-property -- react-three-fiber uses lowercase elements with Three.js props (emissiveIntensity, toneMapped, ...) */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -17,6 +23,17 @@ const PRIMARY = "#00cfe8";
 /* Logo shape: three ellipses plus a nucleus, like the React logo */
 const RX = 2.6;
 const RY = 1.0;
+
+/* Camera: used to size the logo in real pixels on every screen */
+const CAMERA_Z = 9;
+const CAMERA_FOV = 50;
+
+/* Logo size in pixels: large screens vs. stacked (phone / tablet) layout */
+const LOGO_PX_WIDE = 330;
+const LOGO_PX_MAX_STACKED = 220;
+/* Stacked layout: distance from the top of the hero to the logo's center.
+   Keep in sync with the hero's top padding (pt-[21rem] = 336px). */
+const LOGO_CENTER_Y_STACKED = 150;
 
 /* Entrance animation length (seconds) */
 const INTRO_SECONDS = 1.8;
@@ -51,6 +68,20 @@ function createGlowTexture() {
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, 128, 128);
   return new THREE.CanvasTexture(canvas);
+}
+
+/** True from Tailwind's `lg` breakpoint up (exactly in sync with the lg: classes). */
+function subscribeWide(onChange: () => void) {
+  const query = window.matchMedia("(min-width: 1024px)");
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+function useIsWide() {
+  return useSyncExternalStore(
+    subscribeWide,
+    () => window.matchMedia("(min-width: 1024px)").matches,
+    () => false,
+  );
 }
 
 type Controls = { getAzimuthalAngle(): number; getPolarAngle(): number };
@@ -212,18 +243,30 @@ function Scene({ reduce }: { reduce: boolean }) {
   const boost = useRef(0);
   const last = useRef<{ az: number; pol: number } | null>(null);
 
-  const isWide = size.width >= 1024;
+  const isWide = useIsWide();
+
+  // Size the logo in pixels so it looks the same whatever the hero's height is
+  const pxPerUnit =
+    Math.max(size.height, 1) /
+    (2 * CAMERA_Z * Math.tan(THREE.MathUtils.degToRad(CAMERA_FOV / 2)));
+  const targetPx = isWide
+    ? LOGO_PX_WIDE
+    : Math.min(size.width * 0.55, LOGO_PX_MAX_STACKED);
+  const logoScale = targetPx / (pxPerUnit * 2 * RX);
   const halo = useMemo(() => createGlowTexture(), []);
 
-  // Keep the logo right of center on wide screens while still orbiting around
-  // it: shift the rendered image instead of moving the orbit target.
+  // Position the logo by shifting the rendered image (the orbit target stays at
+  // the origin, so dragging still rotates the logo in place):
+  //  - wide screens: right of center, next to the text
+  //  - phones / tablets: centered in the band above the text
   useEffect(() => {
-    const shift = isWide ? -size.width * 0.22 : 0;
+    const x = isWide ? -size.width * 0.22 : 0;
+    const y = isWide ? 0 : size.height / 2 - LOGO_CENTER_Y_STACKED;
     camera.setViewOffset(
       size.width,
       size.height,
-      shift,
-      0,
+      x,
+      y,
       size.width,
       size.height,
     );
@@ -285,7 +328,7 @@ function Scene({ reduce }: { reduce: boolean }) {
       <ambientLight intensity={0.6} />
       <directionalLight position={[4, 5, 6]} intensity={2.2} />
 
-      <group scale={isWide ? 0.8 : 0.65}>
+      <group scale={logoScale}>
         <group ref={intro}>
           {/* Soft halo behind the logo (always faces the camera) */}
           <sprite scale={[10, 10, 1]}>
@@ -347,7 +390,7 @@ export default function ReactLogoScene() {
       <Canvas
         frameloop={visible ? "always" : "never"}
         dpr={[1, 2]}
-        camera={{ position: [0, 0, 9], fov: 50 }}
+        camera={{ position: [0, 0, CAMERA_Z], fov: CAMERA_FOV }}
         gl={{ antialias: true, alpha: true }}
         onCreated={() => setReady(true)}>
         <Scene reduce={reduce} />

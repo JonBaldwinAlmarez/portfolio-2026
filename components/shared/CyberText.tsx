@@ -1,0 +1,119 @@
+"use client";
+
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+
+const GLYPHS = "01<>/\\{}[]#$%&*+=_ｱｲｳｴｵｶｷｸｹｺ";
+const WINDOW = 14; // how many characters ahead of the decode front show glitch glyphs
+const TICK_MS = 40;
+
+function randomGlyphs(length: number) {
+  let out = "";
+  for (let i = 0; i < length; i++) {
+    out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+  }
+  return out;
+}
+
+/**
+ * CyberText
+ * Decodes text left to right: a wave of cyan code glyphs runs ahead of the
+ * real characters, and a thin scan line sweeps down the block as it resolves.
+ *
+ * Layout never jumps: every word reserves its final width (invisible copy)
+ * and the glyphs are drawn on top of it. Screen readers get the real text.
+ */
+export function CyberText({
+  text,
+  className,
+  delay = 0.6,
+  duration = 1.8,
+}: {
+  text: string;
+  className?: string;
+  /** Seconds to wait before decoding starts */
+  delay?: number;
+  /** Seconds the decode takes */
+  duration?: number;
+}) {
+  const reduceMotion = useReducedMotion();
+  const [frame, setFrame] = useState<{
+    revealed: number;
+    glyphs: string;
+  } | null>(null);
+
+  const words = useMemo(() => {
+    let offset = 0;
+    return text.split(" ").map((word) => {
+      const start = offset;
+      offset += word.length + 1;
+      return { word, start };
+    });
+  }, [text]);
+
+  useEffect(() => {
+    if (reduceMotion) return;
+
+    const total = text.length;
+    const step = Math.max(1, Math.ceil(total / ((duration * 1000) / TICK_MS)));
+    let revealed = 0;
+    let interval: ReturnType<typeof setInterval> | undefined;
+
+    const start = setTimeout(() => {
+      interval = setInterval(() => {
+        revealed = Math.min(total, revealed + step);
+        setFrame({ revealed, glyphs: randomGlyphs(total) });
+        if (revealed >= total && interval) clearInterval(interval);
+      }, TICK_MS);
+    }, delay * 1000);
+
+    return () => {
+      clearTimeout(start);
+      if (interval) clearInterval(interval);
+    };
+  }, [text, delay, duration, reduceMotion]);
+
+  if (reduceMotion) return <span className={className}>{text}</span>;
+
+  return (
+    <span className={`relative block ${className ?? ""}`}>
+      <span className="sr-only">{text}</span>
+
+      <span aria-hidden>
+        {words.map(({ word, start }, wi) => (
+          <Fragment key={wi}>
+            {wi > 0 && " "}
+            <span className="relative inline-block">
+              {/* Reserves the word's final width */}
+              <span className="invisible">{word}</span>
+              <span className="absolute left-0 top-0 whitespace-nowrap">
+                {word.split("").map((char, ci) => {
+                  if (!frame) return null;
+                  const i = start + ci;
+                  if (i < frame.revealed) return char;
+                  if (i < frame.revealed + WINDOW) {
+                    return (
+                      <span key={ci} className="text-primary">
+                        {frame.glyphs[i]}
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+              </span>
+            </span>
+          </Fragment>
+        ))}
+      </span>
+
+      {/* Scan line sweeping down while the text decodes */}
+      <motion.span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 h-px bg-primary shadow-[0_0_10px_var(--primary)]"
+        initial={{ opacity: 0, top: "0%" }}
+        animate={{ opacity: [0, 1, 1, 0], top: ["0%", "100%"] }}
+        transition={{ duration, delay, ease: "linear" }}
+      />
+    </span>
+  );
+}
