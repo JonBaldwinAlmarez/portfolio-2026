@@ -26,17 +26,11 @@ const menuItems = [
 // Extracts section IDs used to track the currently active navigation item.
 const sectionIds = menuItems.map((item) => item.href.replace("#", ""));
 
-// Shared animation settings for the navbar's entrance and exit transitions.
-const fadeSlide = {
-  initial: { opacity: 0, y: -8 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -8 },
-  transition: { duration: 0.2, ease: "easeOut" },
-} as const;
+const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Navbar() {
-  // Tracks whether the page has been scrolled beyond the initial threshold.
-  const [isScrolled, setIsScrolled] = useState(false);
+  // True once the home section has been scrolled out of view.
+  const [isVisible, setIsVisible] = useState(false);
 
   // Controls the visibility of the mobile dropdown menu.
   const [isOpen, setIsOpen] = useState(false);
@@ -47,142 +41,199 @@ export function Navbar() {
   // Detects desktop viewport sizes to determine which navigation layout to display.
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  // Shows desktop navigation links only when the viewport is desktop-sized and scrolled.
-  const showLinks = isDesktop && isScrolled;
-
-  // Updates the navbar appearance and closes the dropdown when the user scrolls.
+  // Shows the navbar only after the user scrolls past the home section.
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-      setIsOpen(false); // Closes the dropdown when the user scrolls.
-    };
+    const home = document.getElementById("home");
 
-    // Initializes the navbar state using the current scroll position.
-    handleScroll();
+    // Fallback if there is no #home section: show after most of a screen.
+    if (!home) {
+      const onScroll = () =>
+        setIsVisible(window.scrollY > window.innerHeight * 0.6);
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      return () => window.removeEventListener("scroll", onScroll);
+    }
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    // The top margin makes the navbar appear as the home section's bottom edge
+    // passes 80px from the top of the screen.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const pastHome = !entry.isIntersecting;
+        setIsVisible(pastHome);
+        if (!pastHome) setIsOpen(false);
+      },
+      { rootMargin: "-80px 0px 0px 0px" },
+    );
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    observer.observe(home);
+    return () => observer.disconnect();
   }, []);
+
+  // Closes the dropdown when the user scrolls while it is open.
+  useEffect(() => {
+    if (!isOpen) return;
+    const close = () => setIsOpen(false);
+    window.addEventListener("scroll", close, { passive: true });
+    return () => window.removeEventListener("scroll", close);
+  }, [isOpen]);
 
   return (
     // Respects the user's system preference for reduced motion.
     <MotionConfig reducedMotion="user">
-      <header
-        className={cn(
-          "sticky top-0 z-50 border-b transition-colors duration-300",
-          // Applies a translucent blurred background when scrolling or opening the menu.
-          isScrolled || isOpen
-            ? "border-border/70 bg-background/80 backdrop-blur-md"
-            : "border-transparent bg-transparent",
-        )}>
-        <nav
-          aria-label="Main navigation"
-          className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-6">
-          {/* Brand link navigates back to the home section. */}
-          <Link
-            className="font-heading text-lg font-semibold tracking-tight"
-            href="#home">
-            {siteConfig.name}
-          </Link>
+      <header className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4">
+        <AnimatePresence>
+          {isVisible && (
+            <motion.div
+              key="pill"
+              className="pointer-events-auto relative max-w-full"
+              initial={{ opacity: 0, y: -24, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{
+                opacity: 0,
+                y: -24,
+                scale: 0.9,
+                // Waits for the light effects to play in reverse first.
+                transition: { duration: 0.35, delay: 0.25, ease: "easeIn" },
+              }}
+              transition={{ duration: 0.45, delay: 0.1, ease }}>
+              {/* Flash: a burst of cyan light that settles into a soft glow. */}
+              <motion.span
+                aria-hidden
+                className="pointer-events-none absolute -inset-px rounded-full shadow-[0_0_40px_6px_var(--primary)]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0.25] }}
+                exit={{
+                  opacity: [0.25, 1, 0],
+                  transition: { duration: 0.5, times: [0, 0.5, 1] },
+                }}
+                transition={{ duration: 0.8, times: [0, 0.35, 1] }}
+              />
 
-          {/* Animates the transition between desktop navigation and the mobile menu. */}
-          <AnimatePresence mode="wait" initial={false}>
-            {showLinks ? (
-              // Desktop navigation with an animated indicator for the active section.
-              <motion.ul
-                key="links"
-                {...fadeSlide}
-                className="flex items-center gap-1">
-                {siteConfig.navigation.map((item) => {
-                  const isActive = activeId === item.href.replace("#", "");
+              {/* Pill body */}
+              <div className="relative overflow-hidden rounded-full border border-primary/25 bg-background/70 backdrop-blur-xl">
+                {/* Light sweep that crosses the pill (reversed when leaving). */}
+                <motion.span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-linear-to-r from-transparent via-white/40 to-transparent"
+                  style={{ skewX: -12 }}
+                  initial={{ x: "-100%", opacity: 0 }}
+                  animate={{ x: "350%", opacity: [0, 1, 1, 0] }}
+                  exit={{
+                    x: "-100%",
+                    opacity: [0, 1, 1, 0],
+                    transition: { duration: 0.5, ease: "easeInOut" },
+                  }}
+                  transition={{ duration: 0.7, delay: 0.15, ease: "easeInOut" }}
+                />
 
-                  return (
-                    <li key={item.href}>
+                <nav
+                  aria-label="Main navigation"
+                  className="relative flex items-center p-1.5">
+                  {isDesktop ? (
+                    // Desktop: links with a sliding highlight, plus a Contact button.
+                    <ul className="flex items-center gap-1">
+                      {siteConfig.navigation.map((item) => {
+                        const isActive =
+                          activeId === item.href.replace("#", "");
+
+                        return (
+                          <li key={item.href}>
+                            <Link
+                              href={item.href}
+                              aria-current={isActive ? "location" : undefined}
+                              className={cn(
+                                "relative block rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                                isActive
+                                  ? "text-primary"
+                                  : "text-muted-foreground hover:text-foreground focus-visible:text-foreground",
+                              )}>
+                              {/* Highlight that slides between the links. */}
+                              {isActive && (
+                                <motion.span
+                                  layoutId="active-pill"
+                                  className="absolute inset-0 rounded-full bg-primary/15"
+                                  transition={{
+                                    type: "spring",
+                                    bounce: 0.2,
+                                    duration: 0.5,
+                                  }}
+                                />
+                              )}
+                              <span className="relative">{item.label}</span>
+                            </Link>
+                          </li>
+                        );
+                      })}
+
+                      <li className="ml-1">
+                        <Button
+                          size="lg"
+                          className="rounded-full"
+                          nativeButton={false}
+                          render={<Link href="#contact" />}>
+                          Contact
+                        </Button>
+                      </li>
+                    </ul>
+                  ) : (
+                    // Mobile: brand name and a menu button.
+                    <div className="flex items-center gap-2 pl-4">
                       <Link
-                        href={item.href}
-                        aria-current={isActive ? "location" : undefined}
-                        className={cn(
-                          "relative px-3 py-2 text-sm font-medium transition-colors",
-                          isActive
-                            ? "text-foreground"
-                            : "text-muted-foreground hover:text-foreground focus-visible:text-foreground",
-                        )}>
-                        {item.label}
-
-                        {/* Animates the active indicator between navigation links. */}
-                        {isActive && (
-                          <motion.span
-                            layoutId="active-link"
-                            className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-primary"
-                          />
-                        )}
+                        className="font-heading text-base font-semibold tracking-tight"
+                        href="#home">
+                        {siteConfig.name}
                       </Link>
-                    </li>
-                  );
-                })}
 
-                {/* Uses the shared Shadcn button component as a navigation link. */}
-                <li className="ml-3">
-                  <Button
-                    size="lg"
-                    nativeButton={false}
-                    render={<Link href="#contact" />}>
-                    Contact
-                  </Button>
-                </li>
-              </motion.ul>
-            ) : (
-              // Mobile dropdown trigger displayed when desktop navigation is hidden.
-              <motion.div key="hamburger" {...fadeSlide}>
-                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                  {/* Controls the dropdown visibility and displays the animated menu icon. */}
-                  <DropdownMenuTrigger
-                    render={
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={isOpen ? "Close menu" : "Open menu"}
-                      />
-                    }>
-                    {/* Animates the transition between the menu and close icons. */}
-                    <AnimatePresence mode="wait" initial={false}>
-                      <motion.span
-                        key={isOpen ? "close" : "open"}
-                        initial={{ rotate: -90, opacity: 0 }}
-                        animate={{ rotate: 0, opacity: 1 }}
-                        exit={{ rotate: 90, opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        className="flex">
-                        {isOpen ? <X /> : <Menu />}
-                      </motion.span>
-                    </AnimatePresence>
-                  </DropdownMenuTrigger>
+                      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+                        <DropdownMenuTrigger
+                          render={
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="rounded-full"
+                              aria-label={isOpen ? "Close menu" : "Open menu"}
+                            />
+                          }>
+                          {/* Animates the transition between the menu and close icons. */}
+                          <AnimatePresence mode="wait" initial={false}>
+                            <motion.span
+                              key={isOpen ? "close" : "open"}
+                              initial={{ rotate: -90, opacity: 0 }}
+                              animate={{ rotate: 0, opacity: 1 }}
+                              exit={{ rotate: 90, opacity: 0 }}
+                              transition={{ duration: 0.15 }}
+                              className="flex">
+                              {isOpen ? <X /> : <Menu />}
+                            </motion.span>
+                          </AnimatePresence>
+                        </DropdownMenuTrigger>
 
-                  {/* Displays the mobile navigation links in an aligned dropdown panel. */}
-                  <DropdownMenuContent
-                    align="end"
-                    sideOffset={8}
-                    className="w-48">
-                    {menuItems.map((item) => (
-                      <DropdownMenuItem
-                        key={item.href}
-                        render={<Link href={item.href} />}
-                        className={cn(
-                          "py-2 text-base",
-                          // Highlights the dropdown item matching the active section.
-                          activeId === item.href.replace("#", "") &&
-                            "text-primary",
-                        )}>
-                        {item.label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </nav>
+                        <DropdownMenuContent
+                          align="end"
+                          sideOffset={12}
+                          className="w-48">
+                          {menuItems.map((item) => (
+                            <DropdownMenuItem
+                              key={item.href}
+                              render={<Link href={item.href} />}
+                              className={cn(
+                                "py-2 text-base",
+                                // Highlights the dropdown item matching the active section.
+                                activeId === item.href.replace("#", "") &&
+                                  "text-primary",
+                              )}>
+                              {item.label}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  )}
+                </nav>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
     </MotionConfig>
   );
