@@ -18,6 +18,9 @@ const PRIMARY = "#00cfe8";
 const RX = 2.6;
 const RY = 1.0;
 
+/* Entrance animation length (seconds) */
+const INTRO_SECONDS = 1.8;
+
 /* Starfield: a long tunnel of stars that flows toward the viewer */
 const STAR_COUNT = 2500;
 const STAR_DEPTH = 150;
@@ -204,6 +207,8 @@ function Scene({ reduce }: { reduce: boolean }) {
   const controls = useThree((s) => s.controls) as unknown as Controls | null;
 
   const starGroup = useRef<THREE.Group>(null);
+  const intro = useRef<THREE.Group>(null);
+  const introStart = useRef<number | null>(null);
   const boost = useRef(0);
   const last = useRef<{ az: number; pol: number } | null>(null);
 
@@ -224,6 +229,26 @@ function Scene({ reduce }: { reduce: boolean }) {
     );
     return () => camera.clearViewOffset();
   }, [camera, size.width, size.height, isWide]);
+
+  // Entrance: the logo grows and turns into place instead of popping in.
+  useFrame((state) => {
+    const group = intro.current;
+    if (!group) return;
+    if (reduce) {
+      group.scale.setScalar(1);
+      group.rotation.y = 0;
+      return;
+    }
+    if (introStart.current === null)
+      introStart.current = state.clock.elapsedTime;
+    const t = Math.min(
+      (state.clock.elapsedTime - introStart.current) / INTRO_SECONDS,
+      1,
+    );
+    const ease = 1 - Math.pow(1 - t, 3); // ease-out
+    group.scale.setScalar(0.3 + 0.7 * ease);
+    group.rotation.y = (1 - ease) * Math.PI;
+  });
 
   // Read how fast the user is dragging and feed it to the stars.
   useFrame((_, delta) => {
@@ -261,19 +286,21 @@ function Scene({ reduce }: { reduce: boolean }) {
       <directionalLight position={[4, 5, 6]} intensity={2.2} />
 
       <group scale={isWide ? 0.8 : 0.65}>
-        {/* Soft halo behind the logo (always faces the camera) */}
-        <sprite scale={[10, 10, 1]}>
-          <spriteMaterial
-            map={halo}
-            color={PRIMARY}
-            transparent
-            opacity={0.35}
-            depthWrite={false}
-            toneMapped={false}
-            blending={THREE.AdditiveBlending}
-          />
-        </sprite>
-        <ReactLogo spin={!reduce} />
+        <group ref={intro}>
+          {/* Soft halo behind the logo (always faces the camera) */}
+          <sprite scale={[10, 10, 1]}>
+            <spriteMaterial
+              map={halo}
+              color={PRIMARY}
+              transparent
+              opacity={0.35}
+              depthWrite={false}
+              toneMapped={false}
+              blending={THREE.AdditiveBlending}
+            />
+          </sprite>
+          <ReactLogo spin={!reduce} />
+        </group>
       </group>
 
       <group ref={starGroup}>
@@ -296,6 +323,7 @@ export default function ReactLogoScene() {
   const reduce = useReducedMotion() ?? false;
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
+  const [ready, setReady] = useState(false);
 
   // Stop rendering while the hero is scrolled out of view
   useEffect(() => {
@@ -313,12 +341,15 @@ export default function ReactLogoScene() {
     // rotate the logo (the ! beats the inline touch-action that OrbitControls sets).
     <div
       ref={ref}
-      className="absolute inset-0 cursor-grab active:cursor-grabbing [&_canvas]:touch-pan-y!">
+      className={`absolute inset-0 cursor-grab transition-opacity duration-1000 active:cursor-grabbing motion-reduce:transition-none [&_canvas]:touch-pan-y! ${
+        ready ? "opacity-100" : "opacity-0"
+      }`}>
       <Canvas
         frameloop={visible ? "always" : "never"}
         dpr={[1, 2]}
         camera={{ position: [0, 0, 9], fov: 50 }}
-        gl={{ antialias: true, alpha: true }}>
+        gl={{ antialias: true, alpha: true }}
+        onCreated={() => setReady(true)}>
         <Scene reduce={reduce} />
       </Canvas>
     </div>
