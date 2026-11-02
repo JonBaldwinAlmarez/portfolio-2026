@@ -1,42 +1,95 @@
-import { ReactNode } from "react";
+"use client";
 
-type AnimatedBorderButtonProps = {
-  children: ReactNode;
+import * as React from "react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+type Direction = "clockwise" | "counterclockwise";
+
+type BaseProps = {
+  /** Which way the border gradient rotates. Defaults to clockwise. */
+  direction?: Direction;
 };
+type ButtonProps = React.ComponentProps<"button"> &
+  BaseProps & { href?: undefined };
+type AnchorProps = React.AnchorHTMLAttributes<HTMLAnchorElement> &
+  BaseProps & { href: string };
+type AnimatedButtonProps = ButtonProps | AnchorProps;
 
-export const AnimatedBorderButton = ({
+/**
+ * AnimatedButton
+ * Gradient border that rotates around the button continuously
+ * (it does not pause on hover, focus or click).
+ * Renders a <button> by default, or a link when `href` is passed:
+ *  - hash links (#section, /#section) -> plain <a> (native scroll)
+ *  - other internal hrefs             -> next/link
+ *  - external href / download         -> plain <a>
+ * Tailwind classes only, no globals.css changes needed.
+ */
+export function AnimatedButton({
   children,
-}: AnimatedBorderButtonProps) => {
-  return (
-    <button
-      className="relative bg-transparent border border-border 
-        text-foreground hover:border-primary/50 transition-all 
-        duration-1000 focus:outline-none focus-visible:ring-2 
-        focus-visible:ring-primary focus-visible:ring-offset-2 
-        disabled:opacity-50 disabled:cursor-not-allowed group 
-        px-8 py-4 text-lg font-medium rounded-full overflow-visible 
-        animated-border">
-      {/* Animated SVG Border */}
-      <svg
-        className="absolute left-0 top-0 w-full h-full pointer-events-none download-cv-border"
-        viewBox="0 0 200 60"
-        preserveAspectRatio="none"
-        style={{ overflow: "visible" }}>
-        <path
-          d="M 30,1 A 29,29 0 0 0 1,30 L 1,30 A 29,29 0 0 0 30,59 L 170,59 A 29,29 0 0 0 199,30 L 199,30 A 29,29 0 0 0 170,1 Z"
-          fill="none"
-          stroke="var(--color-primary)"
-          strokeWidth="2"
-          strokeDasharray="400 550"
-          strokeDashoffset="400"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="animated-border-path"
-        />
-      </svg>
-      <span className="relative z-10 flex items-center justify-center gap-2">
+  className,
+  direction = "clockwise",
+  ...props
+}: AnimatedButtonProps) {
+  const classes = cn(
+    "group relative inline-flex h-11 cursor-pointer items-center justify-center overflow-hidden",
+    "rounded-full p-0.5",
+    "outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "disabled:pointer-events-none disabled:opacity-50",
+    className,
+  );
+
+  const inner = (
+    <>
+      {/* Rotating gradient (shows through as the border) */}
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2",
+          "bg-[conic-gradient(transparent_25%,var(--primary),var(--chart-5)_99%,transparent)]",
+          direction === "clockwise"
+            ? "animate-[spin_3s_linear_infinite]"
+            : "animate-[spin_3s_linear_infinite_reverse]",
+          "motion-reduce:animate-none",
+        )}
+      />
+      {/* Button face */}
+      <span
+        className={cn(
+          "relative inline-flex h-full w-full items-center justify-center rounded-full px-7",
+          "bg-linear-to-b from-card to-background",
+          "text-sm font-medium text-foreground",
+        )}>
         {children}
       </span>
+    </>
+  );
+
+  if ("href" in props && typeof props.href === "string") {
+    const { href, download, ...anchorProps } = props as AnchorProps;
+    const usePlainAnchor =
+      download !== undefined ||
+      /^(https?:)?\/\//.test(href) ||
+      href.includes("#");
+
+    if (usePlainAnchor) {
+      return (
+        <a href={href} download={download} className={classes} {...anchorProps}>
+          {inner}
+        </a>
+      );
+    }
+    return (
+      <Link href={href} className={classes} {...anchorProps}>
+        {inner}
+      </Link>
+    );
+  }
+
+  return (
+    <button className={classes} {...(props as ButtonProps)}>
+      {inner}
     </button>
   );
-};
+}

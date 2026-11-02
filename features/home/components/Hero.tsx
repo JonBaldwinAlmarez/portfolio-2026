@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "motion/react";
 import { siteConfig } from "@/config/site";
-import { buttonVariants } from "@/components/ui/button";
+import { AnimatedButton } from "@/components/shared/AnimatedButton";
 
 export default function Hero() {
   return (
@@ -38,9 +37,7 @@ export default function Hero() {
           transition={{ duration: 0.5, delay: 0.3 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}>
-          <Link href="/#projects" className={buttonVariants()}>
-            View projects
-          </Link>
+          <AnimatedButton href="/#projects">View projects</AnimatedButton>
         </motion.div>
 
         {/* Download CV */}
@@ -50,12 +47,12 @@ export default function Hero() {
           transition={{ duration: 0.5, delay: 0.4 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}>
-          <a
+          <AnimatedButton
             href="/CV/Curriculum-Vitae.pdf"
             download="Curriculum-Vitae.pdf"
-            className={buttonVariants()}>
+            direction="counterclockwise">
             Download CV
-          </a>
+          </AnimatedButton>
         </motion.div>
       </div>
     </section>
