@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { motion } from "motion/react";
 import { siteConfig } from "@/config/site";
 import { AnimatedButton } from "@/components/shared/AnimatedButton";
+import { GlitchText } from "@/components/shared/GlitchText";
 
 // Three.js only runs in the browser, so skip server rendering for the scene.
 const ReactLogoScene = dynamic(
@@ -33,7 +34,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="pointer-events-auto mt-4 max-w-3xl font-heading text-5xl font-semibold tracking-tight sm:text-7xl">
-          Hi, I’m {siteConfig.name}
+          <GlitchText>Hi, I’m {siteConfig.name}</GlitchText>
         </motion.h1>
 
         <motion.p
