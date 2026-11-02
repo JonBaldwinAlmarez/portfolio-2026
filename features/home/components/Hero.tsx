@@ -28,10 +28,6 @@ export default function Hero() {
       {/* Content ignores the pointer except where it needs it, so empty areas
           pass drags through to the 3D scene */}
       <div className="pointer-events-none mx-auto flex w-full max-w-5xl flex-col items-start justify-center px-6 py-20">
-        <h1 className="pointer-events-auto text-sm font-medium text-primary">
-          Personal Portfolio
-        </h1>
-
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -45,9 +41,9 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.15 }}
           className="pointer-events-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-          I’m Jon Almarez, a freelance software developer specializing in HTML,
-          CSS, JavaScript, React, React Native, Tailwind CSS, and Laravel. I
-          prioritize clean code, performance, and user-friendly design.
+          A freelance software developer specializing in HTML, CSS, JavaScript,
+          React, React Native, Tailwind CSS, and Laravel. I prioritize clean
+          code, performance, security, and modern design.
         </motion.p>
 
         <div className="pointer-events-auto mt-8 flex flex-wrap gap-3">
