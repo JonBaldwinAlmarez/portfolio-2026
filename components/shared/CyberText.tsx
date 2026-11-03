@@ -28,6 +28,7 @@ export function CyberText({
   className,
   delay = 0.6,
   duration = 1.8,
+  active = true,
 }: {
   text: string;
   className?: string;
@@ -35,6 +36,8 @@ export function CyberText({
   delay?: number;
   /** Seconds the decode takes */
   duration?: number;
+  /** Decoding starts when this becomes true (e.g. when scrolled into view) */
+  active?: boolean;
 }) {
   const reduceMotion = useReducedMotion();
   const [frame, setFrame] = useState<{
@@ -52,7 +55,7 @@ export function CyberText({
   }, [text]);
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || !active) return;
 
     const total = text.length;
     const step = Math.max(1, Math.ceil(total / ((duration * 1000) / TICK_MS)));
@@ -71,7 +74,7 @@ export function CyberText({
       clearTimeout(start);
       if (interval) clearInterval(interval);
     };
-  }, [text, delay, duration, reduceMotion]);
+  }, [text, delay, duration, reduceMotion, active]);
 
   if (reduceMotion) return <span className={className}>{text}</span>;
 
@@ -111,7 +114,11 @@ export function CyberText({
         aria-hidden
         className="pointer-events-none absolute inset-x-0 h-px bg-primary shadow-[0_0_10px_var(--primary)]"
         initial={{ opacity: 0, top: "0%" }}
-        animate={{ opacity: [0, 1, 1, 0], top: ["0%", "100%"] }}
+        animate={
+          active
+            ? { opacity: [0, 1, 1, 0], top: ["0%", "100%"] }
+            : { opacity: 0, top: "0%" }
+        }
         transition={{ duration, delay, ease: "linear" }}
       />
     </span>
