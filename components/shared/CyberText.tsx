@@ -46,12 +46,12 @@ export function CyberText({
   } | null>(null);
 
   const words = useMemo(() => {
-    let offset = 0;
-    return text.split(" ").map((word) => {
-      const start = offset;
-      offset += word.length + 1;
-      return { word, start };
-    });
+    const parts = text.split(" ");
+    return parts.map((word, i) => ({
+      word,
+      // Characters before this word, plus one space after each earlier word
+      start: parts.slice(0, i).reduce((sum, w) => sum + w.length + 1, 0),
+    }));
   }, [text]);
 
   useEffect(() => {
