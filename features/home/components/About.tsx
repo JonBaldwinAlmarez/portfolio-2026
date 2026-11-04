@@ -26,23 +26,23 @@ export default function About() {
           <LogEntry
             size="sm"
             time="T+00:01"
-            level="SYS"
-            text="Docking sequence initiated. Life support nominal."
+            level="Name"
+            text="Jon Almarez"
             duration={0.8}
           />
           <LogEntry
             size="sm"
             time="T+00:02"
-            level="NAV"
-            text="Crew record located: software developer, class: full stack."
+            level="Course"
+            text="Bachelor Of Science in Computer Engineering"
             delay={0.5}
             duration={0.8}
           />
           <LogEntry
             size="sm"
             time="T+00:03"
-            level="OK"
-            text="about.log loaded. Streaming transmission..."
+            level="Experience"
+            text="1 Year"
             delay={1}
             duration={0.8}
           />
@@ -80,10 +80,10 @@ export default function About() {
 
         {/* Experience and Skill section */}
         <div className="mt-8 grid gap-12 md:grid-cols-2">
-          <LogModule command="mount experience">
+          <LogModule command="mount experience" status="[800]">
             <ExperienceSection />
           </LogModule>
-          <LogModule command="mount skills">
+          <LogModule command="mount skills" status="Full-Stack">
             <SkillsSection />
           </LogModule>
         </div>

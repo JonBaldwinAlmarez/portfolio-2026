@@ -16,9 +16,9 @@ import { cn } from "@/lib/utils";
  */
 
 const LEVELS = {
-  SYS: "text-muted-foreground",
-  NAV: "text-chart-3",
-  OK: "text-primary",
+  Name: "text-muted-foreground",
+  Course: "text-chart-3",
+  Experience: "text-primary",
   INFO: "text-primary",
   STACK: "text-chart-2",
   GOAL: "text-chart-3",
@@ -135,10 +135,12 @@ export function ConsolePrompt({ command }: { command: string }) {
 
 export function LogModule({
   command,
+  status = "[ OK ]",
   children,
 }: {
   /** Text after the "$", e.g. "mount experience" */
   command: string;
+  status?: string;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -166,7 +168,7 @@ export function LogModule({
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : undefined}
           transition={{ delay: 0.7 }}>
-          [ OK ]
+          {status}
         </motion.span>
       </motion.div>
 
