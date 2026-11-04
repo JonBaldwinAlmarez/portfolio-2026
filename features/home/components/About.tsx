@@ -83,7 +83,7 @@ export default function About() {
           <LogModule command="mount experience" status="[ 800 ]">
             <ExperienceSection />
           </LogModule>
-          <LogModule command="mount skills" status="[ Full-Stack ]">
+          <LogModule command="skill level" status="[ Full-Stack ]">
             <SkillsSection />
           </LogModule>
         </div>

@@ -3,6 +3,7 @@ export type ExperienceItem = {
   organization: string;
   period: string;
   description: string;
+  projects?: string[];
 };
 
 export const experience: ExperienceItem[] = [
@@ -12,6 +13,7 @@ export const experience: ExperienceItem[] = [
     period: "500 Hours",
     description:
       "Collaborated with project managers, UI/UX designers, and QA testers to develop Toura-mobile, a mobile tourism application. Participated in project demonstrations, addressed technical challenges, and contributed to implementation decisions to improve functionality and user experience.",
+    projects: ["https://chuaconstruction.certicode.net/"],
   },
   {
     role: "Front-End Developer Intern",
