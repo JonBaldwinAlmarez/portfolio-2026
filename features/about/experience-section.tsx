@@ -26,31 +26,30 @@ export default function ExperienceSection() {
               <p className="mt-3 leading-7 text-muted-foreground">
                 {item.description}
               </p>
-              <p>
-                {item.projects && item.projects.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {item.projects.map((url, index) => (
-                      <Button
-                        key={url}
-                        variant="outline"
-                        size="sm"
-                        nativeButton={false}
-                        render={
-                          <a
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          />
-                        }>
-                        View project
-                        {item.projects!.length > 1 ? ` ${index + 1}` : ""}
-                        <ExternalLink data-icon="inline-end" />
-                        <span className="sr-only">(opens in a new tab)</span>
-                      </Button>
-                    ))}
-                  </div>
-                )}
-              </p>
+
+              {item.projects && item.projects.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {item.projects.map((url, index) => (
+                    <Button
+                      key={url}
+                      variant="outline"
+                      size="sm"
+                      nativeButton={false}
+                      render={
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        />
+                      }>
+                      View project
+                      {item.projects!.length > 1 ? ` ${index + 1}` : ""}
+                      <ExternalLink data-icon="inline-end" />
+                      <span className="sr-only">(opens in a new tab)</span>
+                    </Button>
+                  ))}
+                </div>
+              )}
             </li>
           ))}
         </ol>
