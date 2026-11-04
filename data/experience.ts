@@ -8,7 +8,7 @@ export type ExperienceItem = {
 
 export const experience: ExperienceItem[] = [
   {
-    role: "Software Engineering Intern",
+    role: "Full-Stack Engineer Intern",
     organization: "CertiCode",
     period: "500 Hours",
     description:
