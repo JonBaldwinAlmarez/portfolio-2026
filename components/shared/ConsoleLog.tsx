@@ -46,6 +46,7 @@ export function LogEntry({
   size = "lg",
   delay = 0,
   duration = 1.4,
+  scan = true,
   className,
 }: {
   /** Mission time shown in the gutter, e.g. "T+00:04" */
@@ -56,6 +57,7 @@ export function LogEntry({
   /** Seconds to wait after scrolling into view */
   delay?: number;
   /** Seconds the text takes to decode */
+  scan?: boolean;
   duration?: number;
   className?: string;
 }) {
@@ -86,6 +88,7 @@ export function LogEntry({
         active={inView}
         delay={delay + 0.2}
         duration={duration}
+        scan={false}
         className={cn("min-w-0 flex-1", SIZES[size].text, className)}
       />
     </motion.div>

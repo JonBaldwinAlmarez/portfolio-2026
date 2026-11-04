@@ -29,6 +29,7 @@ export default function About() {
             level="Name"
             text="Jon Almarez"
             duration={0.8}
+            scan={false}
           />
           <LogEntry
             size="sm"
@@ -37,6 +38,7 @@ export default function About() {
             text="Bachelor Of Science in Computer Engineering"
             delay={0.5}
             duration={0.8}
+            scan={false}
           />
           <LogEntry
             size="sm"
@@ -45,6 +47,7 @@ export default function About() {
             text="1 Year"
             delay={1}
             duration={0.8}
+            scan={false}
           />
         </div>
 
