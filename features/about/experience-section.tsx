@@ -5,17 +5,15 @@ export default function ExperienceSection() {
     <section aria-labelledby="experience-heading">
       <h3
         className="font-heading text-xl font-semibold tracking-tight"
-        id="experience-heading"
-      >
-        Experience
+        id="experience-heading">
+        Work Experience
       </h3>
       {experience.length > 0 ? (
         <ol className="mt-6 grid gap-6">
           {experience.map((item) => (
             <li
               className="border-l-2 border-primary/30 pl-5"
-              key={`${item.organization}-${item.role}`}
-            >
+              key={`${item.organization}-${item.role}`}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h4 className="font-medium">{item.role}</h4>
                 <p className="text-sm text-muted-foreground">{item.period}</p>

@@ -80,10 +80,10 @@ export default function About() {
 
         {/* Experience and Skill section */}
         <div className="mt-8 grid gap-12 md:grid-cols-2">
-          <LogModule command="mount experience" status="[800]">
+          <LogModule command="mount experience" status="[ 800 ]">
             <ExperienceSection />
           </LogModule>
-          <LogModule command="mount skills" status="Full-Stack">
+          <LogModule command="mount skills" status="[ Full-Stack ]">
             <SkillsSection />
           </LogModule>
         </div>
