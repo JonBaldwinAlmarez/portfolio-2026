@@ -31,13 +31,13 @@ export default function ProjectList() {
           <CardTitle className="font-heading text-xl font-semibold">
             {project.title}
           </CardTitle>
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+          <div className="group/image relative aspect-video w-full overflow-hidden rounded-lg">
             <Image
               src={project.image}
               alt={project.title}
               fill
               sizes="(min-width: 640px) 50vw, 100vw"
-              className="object-cover brightness-75 grayscale transition duration-300 group-hover/card:brightness-100 group-hover/card:grayscale-0"
+              className="object-cover brightness-75 grayscale transition duration-500 ease-out group-hover/image:scale-110 group-hover/image:brightness-100 group-hover/image:grayscale-0 motion-reduce:group-hover/image:scale-100"
             />
           </div>
           <CardDescription className="mt-3 flex-1 leading-7 text-muted-foreground">
