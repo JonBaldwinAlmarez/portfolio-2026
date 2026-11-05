@@ -11,14 +11,14 @@ export type Project = {
 export const projects: Project[] = [
   {
     title: "Finance Tracker",
-    description: "...",
+    description: "Your real description here.",
     technologies: ["React", "Tailwind CSS", "Node.js", "Express", "MongoDB"],
     href: "https://advance-personal-finance-tracker.netlify.app/",
     image: "/CV/image/budget-planner.png",
   },
   {
     title: "Task Tracker",
-    description: "...",
+    description: "Your real description here.",
     technologies: ["React", "Tailwind CSS", "Node.js", "Express", "MongoDB"],
     href: "https://advance-task-tracker.netlify.app/",
     image: "/CV/image/task-tracker.png",
