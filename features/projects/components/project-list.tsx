@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { projects } from "../types/project";
+import { ProjectImage } from "./project-image";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import { Code, ExternalLink } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -33,12 +34,11 @@ export default function ProjectList() {
             {project.title}
           </CardTitle>
           <div className="group/image relative aspect-video w-full overflow-hidden rounded-lg">
-            <Image
+            <ProjectImage
               src={project.image}
-              alt={project.title}
-              fill
-              sizes="(min-width: 640px) 50vw, 100vw"
-              className="object-cover brightness-75 grayscale transition duration-500 ease-out group-hover/image:scale-110 group-hover/image:brightness-100 group-hover/image:grayscale-0 motion-reduce:group-hover/image:scale-100"
+              title={project.title}
+              href={project.href}
+              github={project.github}
             />
           </div>
           <CardDescription className="mt-3 flex-1 leading-7 text-muted-foreground">
@@ -55,40 +55,6 @@ export default function ProjectList() {
               </li>
             ))}
           </ul>
-          {project.href ? (
-            <CardFooter>
-              <Button
-                className="mt-4 w-1/2"
-                nativeButton={false}
-                render={
-                  <Link
-                    href={project.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
-                }>
-                View project{" "}
-                <span aria-hidden="true">
-                  <ArrowUpRight />
-                </span>
-              </Button>
-              <Button
-                className="mt-4 w-1/2"
-                nativeButton={false}
-                render={
-                  <Link
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
-                }>
-                View github{" "}
-                <span aria-hidden="true">
-                  <ArrowUpRight />
-                </span>
-              </Button>
-            </CardFooter>
-          ) : null}
         </Card>
       ))}
     </ul>
