@@ -36,7 +36,7 @@ export default function SkillsSection() {
               <div className="mb-4 flex items-center justify-between font-mono text-xs">
                 <h4 className="font-medium text-primary">
                   <span aria-hidden className="text-primary/50">
-                    //{" "}
+                    {"// "}
                   </span>
                   {group.category}
                 </h4>

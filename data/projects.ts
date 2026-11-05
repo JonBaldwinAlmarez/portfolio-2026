@@ -9,10 +9,10 @@ export const projects: Project[] = [
     href: "https://advance-personal-finance-tracker.netlify.app/",
   },
   {
-    title: "Advance Task Tracker",
+    title: "Task Tracker",
     description:
       "Add a description for the Advance Task Tracker project here. This project is designed to help users manage their tasks efficiently, set deadlines, and track progress.",
     technologies: ["React", "Tailwind CSS", "Node.js", "Express", "MongoDB"],
-    href: "https://advance-personal-finance-tracker.netlify.app/",
+    href: "https://advance-task-tracker.netlify.app/",
   },
 ];
