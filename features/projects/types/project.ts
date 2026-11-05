@@ -4,6 +4,7 @@ export type Project = {
   technologies: string[];
   href?: string;
   image: string;
+  github: string;
 };
 
 export const projects: Project[] = [
@@ -14,6 +15,7 @@ export const projects: Project[] = [
     technologies: ["React", "Tailwind CSS", "Node.js", "Express", "MongoDB"],
     href: "https://advance-personal-finance-tracker.netlify.app/",
     image: "/CV/image/budget-planner.png",
+    github: "https://github.com/JonBaldwinAlmarez/personal-finance-tracker",
   },
   {
     title: "Task Tracker",
@@ -21,5 +23,6 @@ export const projects: Project[] = [
     technologies: ["React", "Tailwind CSS", "Node.js", "Express", "MongoDB"],
     href: "https://advance-task-tracker.netlify.app/",
     image: "/CV/image/task-tracker.png",
+    github: "https://github.com/JonBaldwinAlmarez/advance-task-tracker",
   },
 ];

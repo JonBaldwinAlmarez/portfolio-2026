@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { projects } from "../types/project";
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -57,7 +58,7 @@ export default function ProjectList() {
           {project.href ? (
             <CardFooter>
               <Button
-                className="mt-4 w-full"
+                className="mt-4 w-1/2"
                 nativeButton={false}
                 render={
                   <Link
@@ -66,7 +67,25 @@ export default function ProjectList() {
                     rel="noopener noreferrer"
                   />
                 }>
-                View project <span aria-hidden="true">→</span>
+                View project{" "}
+                <span aria-hidden="true">
+                  <ArrowUpRight />
+                </span>
+              </Button>
+              <Button
+                className="mt-4 w-1/2"
+                nativeButton={false}
+                render={
+                  <Link
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }>
+                View github{" "}
+                <span aria-hidden="true">
+                  <ArrowUpRight />
+                </span>
               </Button>
             </CardFooter>
           ) : null}
