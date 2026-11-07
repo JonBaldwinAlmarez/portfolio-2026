@@ -2,16 +2,7 @@
 
 import { Resend } from "resend";
 import { contactSchema } from "@/features/contact/schema/contact-schema";
-
-/* The directive and the state type */
-export type ContactFormState = {
-  status: "idle" | "success" | "error";
-  message?: string;
-  errors?: Partial<Record<"name" | "email" | "message", string[]>>;
-  values?: { name: string; email: string; message: string };
-};
-
-export const initialContactState: ContactFormState = { status: "idle" };
+import { ContactFormState } from "../types";
 
 export async function sendContactMessage(
   _prevState: ContactFormState,
@@ -46,8 +37,9 @@ export async function sendContactMessage(
 
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL;
+  const from = process.env.CONTACT_FROM_EMAIL;
 
-  if (!apiKey || !to) {
+  if (!apiKey || !to || !from) {
     console.error("Missing RESEND_API_KEY or CONTACT_TO_EMAIL");
 
     return {
@@ -70,7 +62,7 @@ export async function sendContactMessage(
     The try/catch covers network failures and anything unexpected.
     */
     const { error } = await resend.emails.send({
-      from: "Portfolio <onboarding@resend.dev>",
+      from,
       to,
       replyTo: email,
       subject: `New message from ${name}`,
