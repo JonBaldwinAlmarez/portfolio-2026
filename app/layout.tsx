@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { cn } from "@/lib/utils";
 import "./globals.css";
+import { siteConfig } from "@/config/site";
 
 const interHeading = Inter({ subsets: ["latin"], variable: "--font-heading" });
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -14,12 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  // "template" adds your name after every page title:
-  // the home page shows "Your Name | Frontend Developer",
-  // and other pages show "Projects | Your Name"
   title: {
-    default: "Your Name | Frontend Developer",
-    template: "%s | Your Name",
+    default: `${siteConfig.name} | Full-Stack Developer`,
+    template: `%s | ${siteConfig.name}`,
   },
   description: "A personal portfolio showcasing selected work and experience.",
 };
@@ -29,7 +27,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="en"
       className={cn(
-        "dark min-h-full antialiased", // <- "dark" added
+        "dark min-h-full antialiased motion-safe:scroll-smooth", // <- "dark" added
         geistSans.variable,
         geistMono.variable,
         interHeading.variable,
