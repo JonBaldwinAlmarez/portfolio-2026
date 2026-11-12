@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import type { ReactNode } from "react";
-import { Footer } from "@/components/layout/footer";
-import { Navbar } from "@/components/layout/navbar";
+
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
@@ -33,9 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         interHeading.variable,
       )}>
       <body className="flex min-h-screen flex-col">
-        <Navbar />
         <main className="flex-1">{children}</main> {/* <- wrapped */}
-        <Footer />
       </body>
     </html>
   );
