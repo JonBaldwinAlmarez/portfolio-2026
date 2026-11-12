@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
 const UNIQUE_VIOLATION = "23505";
+const idSchema = z.uuid();
 
 export async function createSkill(values: SkillInput): Promise<ActionResult> {
   // 1. Authenticate first. Server Actions are public endpoints.
@@ -40,8 +41,6 @@ export async function createSkill(values: SkillInput): Promise<ActionResult> {
 }
 
 // Update and delete
-
-const idSchema = z.uuid();
 
 export async function updateSkill(
   id: string,
