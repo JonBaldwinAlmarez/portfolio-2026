@@ -8,7 +8,6 @@ export async function getSkills(): Promise<Skill[]> {
   const { data, error } = await supabase
     .from("skills")
     .select("id, name, category, sort_order, created_at")
-    .order("category")
     .order("sort_order")
     .order("name");
 

@@ -1,8 +1,7 @@
 "use client";
 
 import { MotionConfig, motion } from "motion/react";
-
-import { skills } from "@/data/skills";
+import type { SkillGroup } from "@/features/skills/types";
 
 // The hexagon shape, drawn as 6 points (x% y%) around the box
 const HEXAGON = "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)";
@@ -17,7 +16,7 @@ const badge = {
   show: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
 };
 
-export default function SkillsSection() {
+export default function SkillsPanels({ groups }: { groups: SkillGroup[] }) {
   return (
     <MotionConfig reducedMotion="user">
       <section aria-labelledby="skills-heading">
@@ -28,7 +27,7 @@ export default function SkillsSection() {
         </h3>
 
         <div className="mt-6 grid gap-4">
-          {skills.map((group) => (
+          {groups.map((group) => (
             <div
               key={group.category}
               className="rounded-xl border border-border bg-card/50 p-4">
@@ -52,9 +51,9 @@ export default function SkillsSection() {
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true, margin: "0px 0px -10% 0px" }}>
-                {group.items.map(({ name }) => (
+                {group.items.map(({ id, name }) => (
                   <motion.li
-                    key={name}
+                    key={id}
                     variants={badge}
                     className="group size-24 transition-[filter] hover:drop-shadow-[0_0_8px_var(--primary)]">
                     {/* Outer hexagon = the glowing rim */}

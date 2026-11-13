@@ -1,7 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { verifySession } from "@/features/auth/lib/verify-session";
+import { getNextSortOrder } from "@/features/skills/lib/next-sort-order";
 import { skillSchema, type SkillInput } from "../schema/skill-schema";
 import type { ActionResult } from "@/lib/action-result";
 import { createClient } from "@/lib/supabase/server";
@@ -22,7 +23,10 @@ export async function createSkill(values: SkillInput): Promise<ActionResult> {
 
   // 3. Write.
   const supabase = await createClient();
-  const { error } = await supabase.from("skills").insert(parsed.data);
+  const sort_order = await getNextSortOrder(supabase, parsed.data.category);
+  const { error } = await supabase
+    .from("skills")
+    .insert({ ...parsed.data, sort_order });
 
   if (error) {
     if (error.code === UNIQUE_VIOLATION) {
@@ -37,6 +41,7 @@ export async function createSkill(values: SkillInput): Promise<ActionResult> {
 
   // 4. Refresh the admin page so the new skill appears.
   revalidatePath("/admin/skills");
+  updateTag("skills");
   return { ok: true };
 }
 
@@ -55,9 +60,35 @@ export async function updateSkill(
   }
 
   const supabase = await createClient();
+  const { data: currentSkill, error: currentSkillError } = await supabase
+    .from("skills")
+    .select("category")
+    .eq("id", parsedId.data)
+    .maybeSingle();
+
+  if (currentSkillError) {
+    console.error("updateSkill failed:", currentSkillError);
+    return {
+      ok: false,
+      message: "Could not update the skill. Please try again.",
+    };
+  }
+
+  if (!currentSkill) {
+    return { ok: false, message: "Skill not found." };
+  }
+
+  const updateData =
+    currentSkill.category !== parsed.data.category
+      ? {
+          ...parsed.data,
+          sort_order: await getNextSortOrder(supabase, parsed.data.category),
+        }
+      : parsed.data;
+
   const { data, error } = await supabase
     .from("skills")
-    .update(parsed.data)
+    .update(updateData)
     .eq("id", parsedId.data)
     .select("id");
 
@@ -77,6 +108,7 @@ export async function updateSkill(
   }
 
   revalidatePath("/admin/skills");
+  updateTag("skills");
   return { ok: true };
 }
 
@@ -108,5 +140,6 @@ export async function deleteSkill(id: string): Promise<ActionResult> {
   }
 
   revalidatePath("/admin/skills");
+  updateTag("skills");
   return { ok: true };
 }
