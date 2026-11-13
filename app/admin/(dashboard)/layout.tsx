@@ -20,6 +20,11 @@ async function AdminShell({ children }: { children: ReactNode }) {
             </Link>
             <Link
               className="text-muted-foreground transition-colors hover:text-foreground"
+              href="/admin/skills">
+              Skills
+            </Link>
+            <Link
+              className="text-muted-foreground transition-colors hover:text-foreground"
               href="/"
               rel="noopener"
               target="_blank">
