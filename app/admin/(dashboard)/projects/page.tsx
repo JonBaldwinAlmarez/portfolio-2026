@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { verifySession } from "@/features/auth/lib/verify-session";
 import ProjectsManager from "@/features/projects/components/projects-manager";
-import { getProjects } from "@/features/projects/queries/get-projects";
+import { getProjects } from "@/features/projects/queries/get-project";
 
 export const metadata: Metadata = { title: "Projects" };
 

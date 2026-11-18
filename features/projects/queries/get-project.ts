@@ -8,7 +8,7 @@ export async function getProjects(): Promise<ProjectRecord[]> {
   const { data, error } = await supabase
     .from("projects")
     .select(
-      "id, title, description, technologies, href, image, github, sort_order, created_at",
+      "id, title, description, technologies:tech_stack, href:live_url, image:image_url, github:repo_url, sort_order, created_at",
     )
     .order("sort_order")
     .order("created_at");

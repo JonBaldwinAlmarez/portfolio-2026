@@ -22,10 +22,10 @@ function toProjectRow(values: ProjectInput) {
   return {
     title: values.title,
     description: values.description,
-    technologies,
-    image: values.image,
-    href: values.href || null,
-    github: values.github || null,
+    tech_stack: technologies,
+    image_url: values.image,
+    live_url: values.href || null,
+    repo_url: values.github || null,
   };
 }
 
