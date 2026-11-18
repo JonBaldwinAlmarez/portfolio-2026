@@ -14,6 +14,7 @@ export async function getPublicProjects(): Promise<ProjectRecord[]> {
     .select(
       "id, title, description, technologies:tech_stack, href:live_url, image:image_url, github:repo_url, sort_order, created_at",
     )
+    .eq("published", true)
     .order("sort_order")
     .order("created_at");
 
