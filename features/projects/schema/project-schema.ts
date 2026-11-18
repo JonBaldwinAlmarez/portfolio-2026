@@ -1,12 +1,24 @@
 import { z } from "zod";
 
-const optionalHttpUrlSchema = z.union([
-  z.literal(""),
+const httpUrlSchema = z
+  .string()
+  .trim()
+  .pipe(z.url())
+  .refine(
+    (value) => /^https?:\/\//i.test(value),
+    "Enter a valid HTTP or HTTPS URL.",
+  );
+
+const imageSchema = z.union([
+  httpUrlSchema,
   z
-    .url()
+    .string()
+    .trim()
+    .min(1, "Choose a project image.")
+    .max(2048, "Image path or URL is too long.")
     .refine(
-      (value) => ["http:", "https:"].includes(new URL(value).protocol),
-      "Enter a valid HTTP or HTTPS URL.",
+      (value) => value.startsWith("/") && !value.startsWith("//"),
+      "Use an uploaded image URL or a root-relative image path.",
     ),
 ]);
 
@@ -38,13 +50,14 @@ export const projectSchema = z.object({
         items.every((item) => item.length <= 60)
       );
     }, "Enter up to 20 technologies, separated by commas or new lines. Each must be 60 characters or fewer."),
-  image: z
-    .string()
-    .trim()
-    .min(1, "Enter an image path or URL.")
-    .max(2048, "Image path or URL is too long."),
-  href: optionalHttpUrlSchema,
-  github: optionalHttpUrlSchema,
+  image: imageSchema,
+  href: httpUrlSchema,
+  github: httpUrlSchema,
+});
+
+export const projectFormSchema = projectSchema.extend({
+  image: z.union([imageSchema, z.literal("")]),
 });
 
 export type ProjectInput = z.infer<typeof projectSchema>;
+export type ProjectFormValues = z.infer<typeof projectFormSchema>;

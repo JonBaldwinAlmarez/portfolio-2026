@@ -9,6 +9,14 @@ import { projectSchema, type ProjectInput } from "../schema/project-schema";
 
 const idSchema = z.uuid();
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 function toProjectRow(values: ProjectInput) {
   const technologies = [
     ...new Set(
@@ -63,6 +71,10 @@ export async function createProject(
 
   const { error } = await supabase.from("projects").insert({
     ...toProjectRow(parsed.data),
+    slug: slugify(parsed.data.title),
+    summary: parsed.data.description,
+    featured: false,
+    published: true,
     sort_order: (lastProject?.sort_order ?? 0) + 100,
   });
 
