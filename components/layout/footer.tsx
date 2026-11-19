@@ -47,15 +47,19 @@ export function Footer() {
         {/* Connect column goes here (Piece 3) */}
 
         <div>
-          <h2 className="text-sm font-medium">Connect</h2>
+          <h2 className="text-sm font-medium">Social Media</h2>
           <ul className="mt-4 grid gap-3 text-sm text-muted-foreground">
-            <li>
-              <a
-                className="break-all rounded-sm transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                href={`mailto:${siteConfig.email}`}>
-                {siteConfig.email}
-              </a>
-            </li>
+            {siteConfig.socialLinks.map((link) => (
+              <li key={link.href}>
+                <a
+                  className="rounded-sm transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                  href={link.href}
+                  rel="noopener noreferrer"
+                  target="_blank">
+                  {link.label}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
