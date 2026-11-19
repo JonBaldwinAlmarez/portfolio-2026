@@ -6,6 +6,9 @@ import { siteConfig } from "@/config/site";
 import { AnimatedButton } from "@/components/shared/AnimatedButton";
 import { GlitchText } from "@/components/shared/GlitchText";
 import { CyberText } from "@/components/shared/CyberText";
+import { BriefcaseBusiness } from "lucide-react";
+import { FaGithub, FaLinkedinIn } from "react-icons/fa";
+import { SiUpwork } from "react-icons/si";
 
 const INTRO =
   "A freelance software developer specializing in HTML, CSS, JavaScript, React, React Native, Tailwind CSS, and Laravel. I prioritize clean code, performance, security, and modern design.";
@@ -76,6 +79,36 @@ export default function Hero() {
             </AnimatedButton>
           </motion.div>
         </div>
+        <motion.nav
+          aria-label="Professional profiles"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="pointer-events-auto mt-5 flex items-center gap-3">
+          {siteConfig.socialLinks.map((link) => {
+            const label = link.label.toLowerCase();
+
+            const Icon =
+              label === "linkedin"
+                ? FaLinkedinIn
+                : label === "github"
+                  ? FaGithub
+                  : SiUpwork;
+
+            return (
+              <a
+                key={link.label}
+                aria-label={`Visit my ${link.label} profile`}
+                className="flex size-11 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                href={link.href}
+                rel="noopener noreferrer"
+                target="_blank"
+                title={link.label}>
+                <Icon aria-hidden="true" className="size-5" />
+              </a>
+            );
+          })}
+        </motion.nav>
       </div>
     </section>
   );

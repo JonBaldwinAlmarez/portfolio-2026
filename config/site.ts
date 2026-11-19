@@ -12,12 +12,12 @@ export const siteConfig = {
       href: "https://www.linkedin.com/in/jon-baldwin-a-069988229/",
     },
     {
-      label: "UpWork",
-      href: "https://www.upwork.com/freelancers/~01935d6565ea1e2bcb",
+      label: "GitHub",
+      href: "https://github.com/JonBaldwinAlmarez",
     },
     {
-      label: "Github",
-      href: "https://github.com/JonBaldwinAlmarez",
+      label: "Upwork",
+      href: "https://www.upwork.com/freelancers/~01935d6565ea1e2bcb",
     },
   ],
 } as const;
