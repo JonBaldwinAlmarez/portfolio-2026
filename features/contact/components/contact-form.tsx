@@ -17,10 +17,9 @@ export default function ContactForm() {
     <form
       action={formAction}
       className="rounded-xl border border-border p-6 sm:p-8">
-      <h2 className="font-heading text-xl font-semibold">Send a message</h2>
+      <h2 className="font-heading text-xl font-semibold">Send A Message</h2>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">
-        This is a UI starter. Connect a form provider or API route before
-        enabling submissions.
+        Let's Work Together
       </p>
       <div className="mt-6 grid gap-5">
         <div className="grid gap-2">
