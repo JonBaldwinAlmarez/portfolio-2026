@@ -1,9 +1,10 @@
-import { getPublicExperiences } from "@/features/experience/queries/get-experiences"; // Imports the function that fetches public experience records.
-
+import type { ExperienceRecord } from "@/features/experience/types";
 // Displays the work experience section on the public website.
-export default async function ExperienceSection() {
-  const experience = await getPublicExperiences(); // Fetches experience records from the database.
-
+export default function ExperienceSection({
+  experiences,
+}: {
+  experiences: ExperienceRecord[];
+}) {
   return (
     <section aria-labelledby="experience-heading">
       {" "}
@@ -14,9 +15,9 @@ export default async function ExperienceSection() {
         Work Experience
       </h3>
       {/* Checks if there are any experience records to display. */}
-      {experience.length > 0 ? (
+      {experiences.length > 0 ? (
         <ol className="mt-6 grid gap-6">
-          {experience.map(
+          {experiences.map(
             (
               item, // Loops through each experience record.
             ) => (

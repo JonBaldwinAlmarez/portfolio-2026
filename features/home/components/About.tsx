@@ -1,5 +1,6 @@
 import ExperienceSection from "@/features/about/experience-section";
 import SkillsSection from "@/features/about/skills-section";
+import { getPublicExperiences } from "@/features/experience/queries/get-experiences";
 import {
   ConsolePrompt,
   LogEntry,
@@ -7,7 +8,9 @@ import {
   LogModule,
 } from "@/components/shared/ConsoleLog";
 
-export default function About() {
+export default async function About() {
+  const experiences = await getPublicExperiences();
+  const totalHours = experiences.reduce((total, item) => total + item.hours, 0);
   return (
     <section
       aria-labelledby="about-heading"
@@ -83,8 +86,8 @@ export default function About() {
 
         {/* Experience and Skill section */}
         <div className="mt-8 grid gap-12 md:grid-cols-2">
-          <LogModule command="mount experience" status="[ 800 ]">
-            <ExperienceSection />
+          <LogModule command="mount experience" status={`[ ${totalHours} ]`}>
+            <ExperienceSection experiences={experiences} />
           </LogModule>
           <LogModule command="skill level" status="[ Full-Stack ]">
             <SkillsSection />
