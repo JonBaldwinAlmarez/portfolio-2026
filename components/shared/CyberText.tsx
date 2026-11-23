@@ -94,7 +94,7 @@ export function CyberText({
             {wi > 0 && " "}
             <span className="relative inline-block">
               {/* Reserves the word's final width */}
-              <span className="invisible">{word}</span>
+              <span>{word}</span>
               <span className="absolute left-0 top-0 whitespace-nowrap">
                 {word.split("").map((char, ci) => {
                   if (!frame) return null;
