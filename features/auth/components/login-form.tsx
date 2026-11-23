@@ -1,9 +1,9 @@
-"use client";
+"use client"; // Tells Next.js to run this component on the client.
 
-import { useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import { useTransition } from "react"; // Provides pending state and transition handling.
+import { zodResolver } from "@hookform/resolvers/zod"; // Connects the form to Zod validation.
+import { Controller, useForm } from "react-hook-form"; // Provides form state and controlled fields.
+import { Button } from "@/components/ui/button"; // Imports the reusable button component.
 import {
   Card,
   CardContent,
@@ -11,43 +11,43 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"; // Imports card layout components.
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { login } from "@/features/auth/actions/login";
+} from "@/components/ui/field"; // Imports form field layout components.
+import { Input } from "@/components/ui/input"; // Imports the reusable input component.
+import { login } from "@/features/auth/actions/login"; // Imports the login server action.
 import {
   loginSchema,
   type LoginInput,
-} from "@/features/auth/schemas/login-schema";
+} from "@/features/auth/schemas/login-schema"; // Imports validation rules and form value types.
 
 export default function LoginForm() {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition(); // Tracks whether the login request is in progress.
 
   const form = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    resolver: zodResolver(loginSchema), // Validates values using the login schema.
+    defaultValues: { email: "", password: "" }, // Starts both login fields empty.
   });
 
   function onSubmit(values: LoginInput) {
-    form.clearErrors("root");
+    form.clearErrors("root"); // Clears the previous form-level error.
 
     startTransition(async () => {
-      const result = await login(values);
+      const result = await login(values); // Sends the submitted credentials to the server action.
 
-      // On success the action redirects, so we only get here on failure
+      // On success the action redirects, so we only get here on failure.
       if (result) {
-        form.setError("root", { message: result.message });
-        form.resetField("password");
+        form.setError("root", { message: result.message }); // Displays the login error.
+        form.resetField("password"); // Clears the password after a failed login.
       }
     });
   }
 
-  const rootError = form.formState.errors.root?.message;
+  const rootError = form.formState.errors.root?.message; // Reads the form-level error for display.
 
   return (
     <Card className="w-full">
@@ -61,6 +61,7 @@ export default function LoginForm() {
       <CardContent>
         <form id="form-login" noValidate onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
+            {/* Collect the account email. */}
             <Controller
               name="email"
               control={form.control}
@@ -82,6 +83,7 @@ export default function LoginForm() {
               )}
             />
 
+            {/* Collect the account password. */}
             <Controller
               name="password"
               control={form.control}

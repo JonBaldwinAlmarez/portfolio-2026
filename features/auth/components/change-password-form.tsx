@@ -1,56 +1,56 @@
-"use client";
+"use client"; // Tells Next.js to run this component on the client.
 
-import { useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import { useTransition } from "react"; // Provides pending state and transition handling.
+import { zodResolver } from "@hookform/resolvers/zod"; // Connects the form to Zod validation.
+import { Controller, useForm } from "react-hook-form"; // Provides form state and controlled fields.
+import { Button } from "@/components/ui/button"; // Imports the reusable button component.
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"; // Imports card layout components.
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { changePassword } from "@/features/auth/actions/change-password";
+} from "@/components/ui/field"; // Imports form field layout components.
+import { Input } from "@/components/ui/input"; // Imports the reusable input component.
+import { changePassword } from "@/features/auth/actions/change-password"; // Imports the password change server action.
 import {
   changePasswordSchema,
   type ChangePasswordInput,
-} from "@/features/auth/schemas/change-password-schema";
+} from "@/features/auth/schemas/change-password-schema"; // Imports validation rules and form value types.
 
 export function ChangePasswordForm() {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition(); // Tracks whether the password change is in progress.
 
   const form = useForm<ChangePasswordInput>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(changePasswordSchema), // Validates values using the password change schema.
     defaultValues: {
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
+      currentPassword: "", // Starts the current password field empty.
+      newPassword: "", // Starts the new password field empty.
+      confirmPassword: "", // Starts the confirmation field empty.
     },
   });
 
   function onSubmit(values: ChangePasswordInput) {
-    form.clearErrors("root");
+    form.clearErrors("root"); // Clears the previous form-level message.
 
     startTransition(async () => {
-      const result = await changePassword(values);
+      const result = await changePassword(values); // Sends the submitted passwords to the server action.
 
       if (result.ok) {
-        form.reset();
+        form.reset(); // Clears all fields after a successful password change.
       }
 
-      form.setError("root", { message: result.message });
+      form.setError("root", { message: result.message }); // Displays the success or error message.
     });
   }
 
-  const rootError = form.formState.errors.root?.message;
+  const rootError = form.formState.errors.root?.message; // Reads the form-level message for display.
 
   return (
     <Card className="w-full">
@@ -62,8 +62,10 @@ export function ChangePasswordForm() {
         <form
           id="form-change-password"
           noValidate
-          onSubmit={form.handleSubmit(onSubmit)}>
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <FieldGroup>
+            {/* Collect the current password. */}
             <Controller
               name="currentPassword"
               control={form.control}
@@ -87,6 +89,7 @@ export function ChangePasswordForm() {
               )}
             />
 
+            {/* Collect the new password. */}
             <Controller
               name="newPassword"
               control={form.control}
@@ -108,6 +111,7 @@ export function ChangePasswordForm() {
               )}
             />
 
+            {/* Collect the confirmation password. */}
             <Controller
               name="confirmPassword"
               control={form.control}
@@ -142,7 +146,8 @@ export function ChangePasswordForm() {
                 ? "text-sm text-green-600"
                 : "text-sm text-destructive"
             }
-            role="alert">
+            role="alert"
+          >
             {rootError}
           </p>
         )}
