@@ -1,6 +1,6 @@
-"use client";
+"use client"; // Tells Next.js to run this dialog on the client.
 
-import { useState, useTransition } from "react";
+import { useState, useTransition } from "react"; // Provides local error state and pending transition handling.
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,10 +9,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { deleteProject } from "@/features/projects/actions/project-actions";
-import type { ProjectRecord } from "@/features/projects/types/project-record";
+} from "@/components/ui/alert-dialog"; // Imports confirmation dialog components.
+import { Button } from "@/components/ui/button"; // Imports the reusable button component.
+import { deleteProject } from "@/features/projects/actions/project-actions"; // Imports the delete project server action.
+import type { ProjectRecord } from "@/features/projects/types/project-record"; // Imports the project record type.
 
 type DeleteProjectDialogProps = {
   open: boolean;
@@ -25,15 +25,17 @@ export function DeleteProjectDialog({
   onOpenChange,
   project,
 }: DeleteProjectDialogProps) {
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition(); // Tracks whether deletion is in progress.
+  const [error, setError] = useState<string | null>(null); // Stores deletion error messages.
 
+  // Closes the dialog or clears errors when it opens or closes.
   function handleOpenChange(next: boolean) {
     if (isPending) return;
     setError(null);
     onOpenChange(next);
   }
 
+  // Deletes the selected project and reports the result.
   function handleDelete() {
     if (!project) return;
 
@@ -71,7 +73,8 @@ export function DeleteProjectDialog({
           <Button
             disabled={isPending}
             onClick={handleDelete}
-            variant="destructive">
+            variant="destructive"
+          >
             {isPending ? "Deleting..." : "Delete"}
           </Button>
         </AlertDialogFooter>

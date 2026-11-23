@@ -1,9 +1,9 @@
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { getPublicProjects } from "@/features/projects/queries/get-public-projects";
-import { ProjectImage } from "./project-image";
+import { Card, CardDescription, CardTitle } from "@/components/ui/card"; // Imports project card layout components.
+import { getPublicProjects } from "@/features/projects/queries/get-public-projects"; // Fetches published projects.
+import { ProjectImage } from "./project-image"; // Imports the project image and link overlay.
 
 export default async function ProjectList() {
-  const projects = await getPublicProjects();
+  const projects = await getPublicProjects(); // Loads published projects from the database.
 
   if (projects.length === 0) {
     return (
@@ -18,7 +18,8 @@ export default async function ProjectList() {
       {projects.map((project) => (
         <Card
           className="flex h-full flex-col rounded-xl border border-border p-6"
-          key={project.id}>
+          key={project.id}
+        >
           <CardTitle className="font-heading text-xl font-semibold">
             {project.title}
           </CardTitle>
@@ -38,11 +39,13 @@ export default async function ProjectList() {
 
           <ul
             aria-label={`${project.title} technologies`}
-            className="my-5 flex flex-wrap gap-2">
+            className="my-5 flex flex-wrap gap-2"
+          >
             {project.technologies.map((technology) => (
               <li
                 className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground"
-                key={technology}>
+                key={technology}
+              >
                 {technology}
               </li>
             ))}

@@ -1,21 +1,22 @@
-import ExperienceSection from "@/features/about/experience-section";
-import SkillsSection from "@/features/about/skills-section";
-import { getPublicExperiences } from "@/features/experience/queries/get-experiences";
+import ExperienceSection from "@/features/about/experience-section"; // Imports the experience section.
+import SkillsSection from "@/features/about/skills-section"; // Imports the skills section.
+import { getPublicExperiences } from "@/features/experience/queries/get-experiences"; // Fetches public experience records.
 import {
   ConsolePrompt,
   LogEntry,
   LogHeading,
   LogModule,
-} from "@/components/shared/ConsoleLog";
+} from "@/components/shared/ConsoleLog"; // Imports reusable console-style display components.
 
 export default async function About() {
-  const experiences = await getPublicExperiences();
-  const totalHours = experiences.reduce((total, item) => total + item.hours, 0);
+  const experiences = await getPublicExperiences(); // Loads the experience data for the section.
+  const totalHours = experiences.reduce((total, item) => total + item.hours, 0); // Calculates total recorded experience hours.
   return (
     <section
-      aria-labelledby="about-heading"
-      className="scroll-mt-20 border-y border-border/70 bg-muted/30"
-      id="about">
+      aria-labelledby="about-heading" // Associates the section with its accessible heading.
+      className="scroll-mt-20 border-y border-border/70 bg-muted/30" // Applies scroll, border, and background styles.
+      id="about" // Defines the navigation anchor for this section.
+    >
       <div className="mx-auto w-full max-w-5xl px-6 py-16 sm:py-20">
         <p className="text-sm font-medium text-primary">
           <span aria-hidden className="mr-2 font-mono text-primary/60">

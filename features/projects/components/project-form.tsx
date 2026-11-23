@@ -1,32 +1,32 @@
-"use client";
+"use client"; // Tells Next.js to run this form on the client.
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useWatch } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { DialogFooter } from "@/components/ui/dialog";
+import { useEffect, useRef, useState, useTransition } from "react"; // Provides form state, refs, effects, and pending transitions.
+import { zodResolver } from "@hookform/resolvers/zod"; // Connects the form to Zod validation.
+import { useForm, useWatch } from "react-hook-form"; // Provides form state and controlled value watching.
+import { Button } from "@/components/ui/button"; // Imports the reusable button component.
+import { DialogFooter } from "@/components/ui/dialog"; // Imports dialog footer layout.
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/components/ui/field"; // Imports form field layout components.
+import { Input } from "@/components/ui/input"; // Imports the reusable input component.
+import { Textarea } from "@/components/ui/textarea"; // Imports the reusable textarea component.
 import {
   createProject,
   updateProject,
-} from "@/features/projects/actions/project-actions";
+} from "@/features/projects/actions/project-actions"; // Imports project create and update actions.
 import {
   projectFormSchema,
   projectSchema,
   type ProjectFormValues,
-} from "@/features/projects/schema/project-schema";
-import type { ProjectRecord } from "@/features/projects/types/project-record";
-import { createClient } from "@/lib/supabase/client";
+} from "@/features/projects/schema/project-schema"; // Imports project form validation rules and types.
+import type { ProjectRecord } from "@/features/projects/types/project-record"; // Imports the project record type.
+import { createClient } from "@/lib/supabase/client"; // Imports the browser-side Supabase client.
 
-const IMAGE_BUCKET = "project-images";
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const IMAGE_BUCKET = "project-images"; // Names the Supabase Storage bucket for project images.
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // Limits uploaded images to 5 MB.
 const IMAGE_EXTENSIONS: Record<string, string> = {
   "image/avif": "avif",
   "image/jpeg": "jpg",
@@ -40,6 +40,7 @@ type ProjectFormProps = {
   onCancel: () => void;
 };
 
+// Returns an image validation error or null when the file is valid.
 function getImageError(file: File): string | null {
   if (!IMAGE_EXTENSIONS[file.type]) {
     return "Choose a JPG, PNG, WebP, or AVIF image.";
@@ -56,9 +57,8 @@ async function removeFailedUpload(
   supabase: ReturnType<typeof createClient>,
   path: string,
 ): Promise<string> {
-  const { error } = await supabase.storage
-    .from(IMAGE_BUCKET)
-    .remove([path]);
+  // Removes an uploaded image when form validation or saving fails.
+  const { error } = await supabase.storage.from(IMAGE_BUCKET).remove([path]);
 
   if (error) {
     console.error("Could not remove failed project image upload:", error);
@@ -69,16 +69,16 @@ async function removeFailedUpload(
 }
 
 export function ProjectForm({ project, onDone, onCancel }: ProjectFormProps) {
-  const [isPending, startTransition] = useTransition();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
-  const [imageError, setImageError] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isPending, startTransition] = useTransition(); // Tracks whether saving is in progress.
+  const [selectedFile, setSelectedFile] = useState<File | null>(null); // Stores the image selected for upload.
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null); // Stores a temporary preview URL.
+  const [imageError, setImageError] = useState<string | null>(null); // Stores image validation errors.
+  const [isDragging, setIsDragging] = useState(false); // Tracks drag-and-drop hover state.
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
 
   const form = useForm<ProjectFormValues>({
-    resolver: zodResolver(projectFormSchema),
+    resolver: zodResolver(projectFormSchema), // Validates project fields with Zod.
     defaultValues: {
       title: project?.title ?? "",
       description: project?.description ?? "",
@@ -99,6 +99,7 @@ export function ProjectForm({ project, onDone, onCancel }: ProjectFormProps) {
     [],
   );
 
+  // Processes a selected or dropped image file.
   function chooseFile(file: File | undefined) {
     if (!file) return;
 
@@ -123,6 +124,7 @@ export function ProjectForm({ project, onDone, onCancel }: ProjectFormProps) {
     setImageError(null);
   }
 
+  // Uploads the image and creates or updates the project.
   function onSubmit(values: ProjectFormValues) {
     form.clearErrors("root");
 
@@ -167,9 +169,8 @@ export function ProjectForm({ project, onDone, onCancel }: ProjectFormProps) {
           return;
         }
 
-        image = supabase.storage
-          .from(IMAGE_BUCKET)
-          .getPublicUrl(uploadedPath).data.publicUrl;
+        image = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(uploadedPath)
+          .data.publicUrl;
       }
 
       const parsed = projectSchema.safeParse({ ...values, image });
@@ -260,9 +261,7 @@ export function ProjectForm({ project, onDone, onCancel }: ProjectFormProps) {
           <p className="text-sm text-muted-foreground">
             Separate technologies with commas or new lines.
           </p>
-          {errors.technologies && (
-            <FieldError errors={[errors.technologies]} />
-          )}
+          {errors.technologies && <FieldError errors={[errors.technologies]} />}
         </Field>
 
         <Field data-invalid={!!imageError}>
@@ -283,9 +282,7 @@ export function ProjectForm({ project, onDone, onCancel }: ProjectFormProps) {
           />
           <div
             className={`rounded-lg border border-dashed p-5 text-center transition-colors ${
-              isDragging
-                ? "border-primary bg-primary/5"
-                : "border-border"
+              isDragging ? "border-primary bg-primary/5" : "border-border"
             }`}
             onDragEnter={(event) => {
               event.preventDefault();
@@ -299,7 +296,8 @@ export function ProjectForm({ project, onDone, onCancel }: ProjectFormProps) {
               event.preventDefault();
               setIsDragging(true);
             }}
-            onDrop={handleDrop}>
+            onDrop={handleDrop}
+          >
             {currentImage ? (
               <div className="mx-auto mb-4 aspect-video max-w-sm overflow-hidden rounded-md bg-muted">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -322,7 +320,8 @@ export function ProjectForm({ project, onDone, onCancel }: ProjectFormProps) {
             <Button
               onClick={() => fileInputRef.current?.click()}
               type="button"
-              variant="outline">
+              variant="outline"
+            >
               {currentImage ? "Choose a different image" : "Choose image"}
             </Button>
             <p className="mt-2 text-xs text-muted-foreground">
@@ -382,7 +381,8 @@ export function ProjectForm({ project, onDone, onCancel }: ProjectFormProps) {
           disabled={isPending}
           onClick={onCancel}
           type="button"
-          variant="outline">
+          variant="outline"
+        >
           Cancel
         </Button>
         <Button disabled={isPending} type="submit">

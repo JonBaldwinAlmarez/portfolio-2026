@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Tells Next.js to run this dialog on the client.
 
 import {
   Dialog,
@@ -6,9 +6,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { ProjectForm } from "@/features/projects/components/project-form";
-import type { ProjectRecord } from "@/features/projects/types/project-record";
+} from "@/components/ui/dialog"; // Imports dialog layout components.
+import { ProjectForm } from "@/features/projects/components/project-form"; // Imports the project form.
+import type { ProjectRecord } from "@/features/projects/types/project-record"; // Imports the project record type.
 
 type ProjectFormDialogProps = {
   open: boolean;

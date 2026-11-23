@@ -1,32 +1,35 @@
-"use client";
+"use client"; // Tells Next.js to run this component on the client.
 
-import { useState } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { DeleteProjectDialog } from "@/features/projects/components/delete-project-dialog";
-import { ProjectFormDialog } from "@/features/projects/components/project-form-dialog";
-import type { ProjectRecord } from "@/features/projects/types/project-record";
+import { useState } from "react"; // Provides local state for dialog and selected project values.
+import { Pencil, Plus, Trash2 } from "lucide-react"; // Imports edit, create, and delete icons.
+import { Button } from "@/components/ui/button"; // Imports the reusable button component.
+import { DeleteProjectDialog } from "@/features/projects/components/delete-project-dialog"; // Imports the delete confirmation dialog.
+import { ProjectFormDialog } from "@/features/projects/components/project-form-dialog"; // Imports the project form dialog.
+import type { ProjectRecord } from "@/features/projects/types/project-record"; // Imports the project record type.
 
 export default function ProjectsManager({
   projects,
 }: {
   projects: ProjectRecord[];
 }) {
-  const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<ProjectRecord | null>(null);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState<ProjectRecord | null>(null);
+  const [formOpen, setFormOpen] = useState(false); // Tracks whether the project form is open.
+  const [editing, setEditing] = useState<ProjectRecord | null>(null); // Stores the project being edited.
+  const [deleteOpen, setDeleteOpen] = useState(false); // Tracks whether the delete dialog is open.
+  const [deleting, setDeleting] = useState<ProjectRecord | null>(null); // Stores the project being deleted.
 
+  // Opens the form in create mode.
   function openCreate() {
     setEditing(null);
     setFormOpen(true);
   }
 
+  // Opens the form with an existing project.
   function openEdit(project: ProjectRecord) {
     setEditing(project);
     setFormOpen(true);
   }
 
+  // Opens the delete confirmation for a project.
   function openDelete(project: ProjectRecord) {
     setDeleting(project);
     setDeleteOpen(true);
@@ -57,7 +60,8 @@ export default function ProjectsManager({
           {projects.map((project) => (
             <li
               className="flex items-center justify-between gap-4 px-4 py-4"
-              key={project.id}>
+              key={project.id}
+            >
               <div className="min-w-0">
                 <p className="truncate font-medium">{project.title}</p>
                 <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
@@ -73,14 +77,16 @@ export default function ProjectsManager({
                   aria-label={`Edit ${project.title}`}
                   onClick={() => openEdit(project)}
                   size="icon"
-                  variant="ghost">
+                  variant="ghost"
+                >
                   <Pencil aria-hidden="true" />
                 </Button>
                 <Button
                   aria-label={`Delete ${project.title}`}
                   onClick={() => openDelete(project)}
                   size="icon"
-                  variant="ghost">
+                  variant="ghost"
+                >
                   <Trash2 aria-hidden="true" />
                 </Button>
               </div>

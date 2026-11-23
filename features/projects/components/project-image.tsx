@@ -1,12 +1,12 @@
-"use client";
+"use client"; // Tells Next.js to run this component on the client.
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Code, ExternalLink } from "lucide-react";
+import { useState } from "react"; // Tracks whether project links are active.
+import Image from "next/image"; // Renders optimized project images.
+import Link from "next/link"; // Renders live-site and source-code links.
+import { Code, ExternalLink } from "lucide-react"; // Imports project link icons.
 
-import { CyberText } from "@/components/shared/CyberText";
-import { cn } from "@/lib/utils";
+import { CyberText } from "@/components/shared/CyberText"; // Imports animated link text.
+import { cn } from "@/lib/utils"; // Provides conditional class name merging.
 
 export function ProjectImage({
   src,
@@ -19,7 +19,7 @@ export function ProjectImage({
   href?: string;
   github?: string;
 }) {
-  // true while the mouse is over the image, or a link inside has keyboard focus
+  // Tracks mouse hover or keyboard focus state for the image overlay.
   const [active, setActive] = useState(false);
 
   const links = [
@@ -48,7 +48,8 @@ export function ProjectImage({
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
       onFocus={() => setActive(true)}
-      onBlur={() => setActive(false)}>
+      onBlur={() => setActive(false)}
+    >
       <Image
         src={src}
         alt={title}
@@ -68,7 +69,8 @@ export function ProjectImage({
           className={cn(
             "absolute inset-0 flex items-center justify-center gap-8 transition-opacity duration-300",
             active ? "opacity-100" : "pointer-events-none opacity-0",
-          )}>
+          )}
+        >
           {links.map((link, index) => (
             <Link
               key={link.url}
@@ -76,7 +78,8 @@ export function ProjectImage({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={link.aria}
-              className="group/link flex flex-col items-center gap-2 outline-none">
+              className="group/link flex flex-col items-center gap-2 outline-none"
+            >
               <span className="grid size-12 place-items-center rounded-full border border-primary/60 bg-background/70 text-primary backdrop-blur-sm transition-[box-shadow,background-color] group-hover/link:bg-primary/20 group-hover/link:shadow-[0_0_18px_-2px_var(--primary)] group-focus-visible/link:ring-3 group-focus-visible/link:ring-ring/50">
                 {link.icon}
               </span>
