@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Tells Next.js to run this dialog on the client.
 
 import {
   Dialog,
@@ -6,9 +6,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { SkillForm } from "@/features/skills/components/skill-form";
-import type { Skill } from "@/features/skills/types";
+} from "@/components/ui/dialog"; // Imports dialog layout components.
+import { SkillForm } from "@/features/skills/components/skill-form"; // Imports the skill form.
+import type { Skill } from "@/features/skills/types"; // Imports the skill record type.
 
 type SkillFormDialogProps = {
   open: boolean;

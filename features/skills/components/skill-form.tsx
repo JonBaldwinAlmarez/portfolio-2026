@@ -1,23 +1,23 @@
-"use client";
+"use client"; // Tells Next.js to run this form on the client.
 
-import { useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { DialogFooter } from "@/components/ui/dialog";
+import { useTransition } from "react"; // Provides pending state and transition handling.
+import { zodResolver } from "@hookform/resolvers/zod"; // Connects the form to Zod validation.
+import { Controller, useForm } from "react-hook-form"; // Provides controlled form fields and state.
+import { Button } from "@/components/ui/button"; // Imports the reusable button component.
+import { DialogFooter } from "@/components/ui/dialog"; // Imports dialog footer layout.
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/field"; // Imports form field layout components.
+import { Input } from "@/components/ui/input"; // Imports the reusable input component.
 import {
   createSkill,
   updateSkill,
-} from "@/features/skills/actions/skill-actions";
-import { skillSchema, type SkillInput } from "../schema/skill-schema";
-import type { Skill } from "@/features/skills/types";
+} from "@/features/skills/actions/skill-actions"; // Imports skill create and update actions.
+import { skillSchema, type SkillInput } from "../schema/skill-schema"; // Imports skill validation rules and types.
+import type { Skill } from "@/features/skills/types"; // Imports the skill record type.
 
 type SkillFormProps = {
   skill: Skill | null; // null = creating, a skill = editing
@@ -32,28 +32,28 @@ export function SkillForm({
   onDone,
   onCancel,
 }: SkillFormProps) {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition(); // Tracks whether saving is in progress.
 
   const form = useForm<SkillInput>({
-    resolver: zodResolver(skillSchema),
+    resolver: zodResolver(skillSchema), // Validates values using the skill schema.
     defaultValues: {
-      name: skill?.name ?? "",
-      category: skill?.category ?? "",
+      name: skill?.name ?? "", // Populates or initializes the skill name.
+      category: skill?.category ?? "", // Populates or initializes the category.
     },
   });
 
   function onSubmit(values: SkillInput) {
-    form.clearErrors("root");
+    form.clearErrors("root"); // Clears the previous form-level error.
 
     startTransition(async () => {
       const result = skill
-        ? await updateSkill(skill.id, values)
-        : await createSkill(values);
+        ? await updateSkill(skill.id, values) // Updates an existing skill.
+        : await createSkill(values); // Creates a new skill.
 
       if (result.ok) {
         onDone();
       } else {
-        form.setError("root", { message: result.message });
+        form.setError("root", { message: result.message }); // Displays the action error.
       }
     });
   }

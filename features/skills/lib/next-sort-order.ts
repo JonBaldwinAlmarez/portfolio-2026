@@ -1,5 +1,5 @@
-import "server-only";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import "server-only"; // Restricts this helper to server-only code.
+import type { SupabaseClient } from "@supabase/supabase-js"; // Imports the Supabase client type.
 
 const BLOCK_SIZE = 100;
 
@@ -9,12 +9,12 @@ export async function getNextSortOrder(
   category: string,
 ): Promise<number> {
   const { data: lastInCategory } = await supabase
-    .from("skills")
-    .select("sort_order")
-    .eq("category", category)
-    .order("sort_order", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .from("skills") // Selects the skills table.
+    .select("sort_order") // Retrieves only sort positions.
+    .eq("category", category) // Filters to the requested category.
+    .order("sort_order", { ascending: false }) // Finds the highest position.
+    .limit(1) // Retrieves one record.
+    .maybeSingle(); // Returns one record or null.
 
   if (lastInCategory) return lastInCategory.sort_order + 1;
 
