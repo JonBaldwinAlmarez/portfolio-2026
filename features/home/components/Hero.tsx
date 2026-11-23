@@ -1,14 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { siteConfig } from "@/config/site";
 import { AnimatedButton } from "@/components/shared/AnimatedButton";
 import { GlitchText } from "@/components/shared/GlitchText";
 import { CyberText } from "@/components/shared/CyberText";
-import { BriefcaseBusiness } from "lucide-react";
-import { FaGithub, FaLinkedinIn } from "react-icons/fa";
-import { SiUpwork } from "react-icons/si";
+import { BriefcaseBusiness, CodeXml } from "lucide-react";
 
 const INTRO =
   "A freelance software developer specializing in HTML, CSS, JavaScript, React, React Native, Tailwind CSS, and Laravel. I prioritize clean code, performance, security, and modern design.";
@@ -20,13 +19,20 @@ const ReactLogoScene = dynamic(
 );
 
 export default function Hero() {
+  const [showLogoScene, setShowLogoScene] = useState(false);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setShowLogoScene(true), 1500);
+    return () => window.clearTimeout(timeout);
+  }, []);
+
   return (
     <section
       id="home"
       className="relative isolate flex min-h-[65vh] w-full scroll-mt-20 overflow-hidden">
       {/* 3D background: sits behind the content and receives drags */}
       <div aria-hidden className="absolute inset-0 -z-10">
-        <ReactLogoScene />
+        {showLogoScene && <ReactLogoScene />}
         {/* Fades the scene into the next section */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-background to-transparent" />
       </div>
@@ -88,13 +94,6 @@ export default function Hero() {
           {siteConfig.socialLinks.map((link) => {
             const label = link.label.toLowerCase();
 
-            const Icon =
-              label === "linkedin"
-                ? FaLinkedinIn
-                : label === "github"
-                  ? FaGithub
-                  : SiUpwork;
-
             return (
               <a
                 key={link.label}
@@ -104,7 +103,18 @@ export default function Hero() {
                 rel="noopener noreferrer"
                 target="_blank"
                 title={link.label}>
-                <Icon aria-hidden="true" className="size-5" />
+                {label === "linkedin" ? (
+                  <span aria-hidden="true" className="text-sm font-bold">
+                    in
+                  </span>
+                ) : label === "github" ? (
+                  <CodeXml aria-hidden="true" className="size-5" />
+                ) : (
+                  <BriefcaseBusiness
+                    aria-hidden="true"
+                    className="size-5"
+                  />
+                )}
               </a>
             );
           })}
